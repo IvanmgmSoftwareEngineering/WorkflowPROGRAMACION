@@ -49,9 +49,13 @@ echo " *" >> ./$1.c
 echo " *" >> ./$1.c
 echo " */" >> ./$1.c
 echo "//----------------------------------------------------------------------------" >> ./$1.c
+echo "//LIBRERÍAS SISTEMA (entre < >)" >> ./$1.c
 echo "#include <stdio.h>" >> ./$1.c
 echo "#include <stdlib.h>" >> ./$1.c
 echo "#include <string.h>" >> ./$1.c
+echo >> ./$1.c
+echo "//LIBRERÍAS PROPIAS (entre \" \")" >> ./$1.c
+echo "//#include \"lireria.h\"" >> ./$1.c
 echo >> ./$1.c
 echo >> ./$1.c
 echo >> ./$1.c
