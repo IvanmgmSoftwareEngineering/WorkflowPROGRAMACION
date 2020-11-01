@@ -1,4 +1,4 @@
-#!/bin/bas
+#!/bin/bash
 
 #CONTROL ERRORES ARGUMENTOS DE ENTRADA
 	if test $# -eq 0
@@ -27,22 +27,23 @@
 
 touch ./$1.h
 chmod 700 ./$1.h
-echo "/* TÍTULO:" >> ./$1.h
+echo "/*" >> ./$1.h
+echo " * TÍTULO: libreria.h" >> ./$1.h
 echo " * AUTOR: Iván Martín Gómez" >> ./$1.h
 echo " * INSTRUCCIONES DE USO: " >> ./$1.h
 echo " * --- AQUÍ SÓLO LAS CABECERAS DE LAS FUNCIONES. DEBO CREAR UN FICHERO" >> ./$1.h
 echo " * --- CON EL MISMO NOMBRE QUE ESTE FICHERO, PERO CON EXTENSIÓN .C," >> ./$1.h
-echo " * --- EN EL QUE SE IMPLEMENTARÁS CADA UNA DE LAS FUNCIONES DE LAS" >> ./$1.h
+echo " * --- EN EL QUE SE IMPLEMENTARÁN CADA UNA DE LAS FUNCIONES DE LAS" >> ./$1.h
 echo " * --- CUALES AQUI SE MUESTRAN LAS CABECERAS" >> ./$1.h
-echo >> ./$1.h
-echo " *     tds = Tipo Dato Salida">> ./$1.h
-echo " *     tde = Tipo Dato Entrada">> ./$1.h
-echo " */     tde = Tipo Dato Entrada">> ./$1.h
+echo " * ">> ./$1.h
+echo " *      tds = Tipo Dato Salida">> ./$1.h
+echo " *      tde = Tipo Dato Entrada">> ./$1.h
+echo " */" >> ./$1.h
 echo echo "//----------------------------------------------------------------------------" >> ./$1.h
 echo >> ./$1.h
 echo "#ifndef _LIBRERIA_H">> ./$1.h
 echo "#define _LIBRERIA_H">> ./$1.h
 echo "	tds nombre_funcion_1 (tde Argumento_1, tde Argumento_2, tde Argumento_n);">> ./$1.h
-echo "#	tds nombre_funcion_2 (tde Argumento_1, tde Argumento_2, tde Argumento_n);">> ./$1.h
-echo "#	tds nombre_funcion_m (tde Argumento_1, tde Argumento_2, tde Argumento_n);">> ./$1.h
+echo "	tds nombre_funcion_2 (tde Argumento_1, tde Argumento_2, tde Argumento_n);">> ./$1.h
+echo "	tds nombre_funcion_m (tde Argumento_1, tde Argumento_2, tde Argumento_n);">> ./$1.h
 echo "#endif">> ./$1.h
