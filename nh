@@ -39,7 +39,7 @@ echo " * ">> ./$1.h
 echo " *      tds = Tipo Dato Salida">> ./$1.h
 echo " *      tde = Tipo Dato Entrada">> ./$1.h
 echo " */" >> ./$1.h
-echo echo "//----------------------------------------------------------------------------" >> ./$1.h
+echo "//----------------------------------------------------------------------------" >> ./$1.h
 echo >> ./$1.h
 echo "#ifndef _LIBRERIA_H">> ./$1.h
 echo "#define _LIBRERIA_H">> ./$1.h
