@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# Crea un nuevo fichero en el directorio actual, con el nombre sin espacios que le pasemos como argumento y con permisos de Ejecución para el propietario. Adicionalmente el fichero contendrá en la primera línea #!/bin/bash y algunos comentarios adicionales
+
+# Control Errores Argumentos
+
+if test $# -eq 0
+then
+	echo "Error: por favor indique el nombre del fichero"
+	exit 1
+fi
+
+if test $# -gt 1
+then
+	echo "Error: el numero de argumentos es mayor que 1"
+	exit 2
+fi
+
+for i in `ls ./`
+do
+	if test "$1.txt" = "$i" 
+	then
+		echo "Error: el fichero ya existe"
+		exit 3
+	fi
+done
+
+# FIN Control Errores de Argumentos
+
+touch ./$1.txt
+chmod 700 ./$1.txt
+echo "#!/bin/bash" >> ./$1.txt
+echo >> ./$1.txt
+echo "# Descripción del Script" >> ./$1.txt
+echo >> ./$1.txt
+echo "#		Argumentos que debe recibir: " >> ./$1.txt
+echo >> ./$1.txt
+echo "#		Salida: " >> ./$1.txt
+echo >> ./$1.txt
+echo >> ./$1.txt
+echo "# Control de Argumentos de Entrada" >> ./$1.txt
+echo "if test \$# -eq 0	# No hay Argumentos" >> ./$1.txt
+echo "then" >> ./$1.txt
+echo >> ./$1.txt
+echo >> ./$1.txt
+echo "fi" >> ./$1.txt
+echo >> ./$1.txt
+echo "if test \$# -eq 1	# Hay 1 Argumento" >> ./$1.txt
+echo "then" >> ./$1.txt
+echo >> ./$1.txt
+echo >> ./$1.txt
+echo "fi" >> ./$1.txt
+echo >> ./$1.txt
+echo "if test \$# -gt 1	# Hay 2 o más Argumentos" >> ./$1.txt
+echo "then" >> ./$1.txt
+echo >> ./$1.txt
+echo >> ./$1.txt
+echo "fi" >> ./$1.txt
+echo "# FIN Control de Argumentos de Entrada" >> ./$1.txt
+echo >> ./$1.txt
+echo "# Empieza la funcionalidad del Script" >> ./$1.txt
+echo >> ./$1.txt
+echo >> ./$1.txt
+echo >> ./$1.txt
+echo >> ./$1.txt
+echo "# FIN Script" >> ./$1.txt
+echo "exit 0" >> ./$1.txt
+
+exit 0

@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Descripción del Script: Abre un fichero que se le pasa como argumento en el programa TextEdit
+
+#		Argumentos que debe recibir: un Fichero
+
+#		Salida: 
+
+
+# Control de Argumentos de Entrada
+if test $# -eq 0	# No hay Argumentos
+then
+
+	echo "Error: no se ha pasado ningún Argumento"
+	exit 1
+
+fi
+
+if test $# -eq 1	# Hay 1 Argumento
+then
+	if ! test -e $1
+	then
+		echo "Error: el Fichero $1 no existe"
+		exit 2
+	fi
+	
+	if ! test -f $1
+	then
+		echo "Error: el Fichero $1 no es un Archivo de tipo Fichero"
+		exit 3
+	fi
+
+fi
+
+if test $# -gt 1	# Hay 2 o más Argumentos
+then
+	echo "Error: ese han pasado 2 o mas Argumentos"
+	exit 4
+
+fi
+# FIN Control de Argumentos de Entrada
+
+# Empieza la funcionalidad del Script
+
+	open -a TextEdit ./$1
+
+
+
+# FIN Script
+exit 0
