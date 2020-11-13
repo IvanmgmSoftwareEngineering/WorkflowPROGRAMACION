@@ -1,0 +1,38 @@
+#!/bin/bash
+
+if test $# -eq 0
+then
+	echo "usage cdt: NombreSitioWeb, ningún argumento recibido"
+	exit 1
+fi
+
+if test $# -eq 1
+then
+	if test -e $1
+	then
+		if test -d $1
+		then
+			echo "Error: ya existe un Directorio con el nombre $1"
+			exit 2
+		fi
+	fi
+fi
+
+if test $# -gt 1
+then
+	echo "usage cdt: NombreSitioWeb, 2 o más argumentos recibidos"
+	exit 3
+fi
+
+mkdir ./$1
+mkdir ./$1/img
+mkdir ./$1/img/jpg
+mkdir ./$1/img/mpeg
+mkdir ./$1/img/gif
+mkdir ./$1/videos
+mkdir ./$1/doc
+mkdir ./$1/doc/pdf
+mkdir ./$1/doc/txt
+mkdir ./$1/html
+mkdir ./$1/css
+mkdir ./$1/js

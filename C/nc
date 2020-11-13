@@ -1,0 +1,280 @@
+#!/bin/bash
+
+#CONTROL ERRORES ARGUMENTOS DE ENTRADA
+	if test $# -eq 0
+	then
+		echo "Error: por favor indique el nombre del fichero"
+		exit 1
+	fi
+
+	if test $# -gt 1
+	then
+		echo "Error: el numero de argumentos es mayor que 1"
+		exit 2
+	fi
+
+	#Esto es una forma de hacer útil para saber como funciona el 'for'
+	for i in `ls ./`
+	do
+		if test "$1.c" = "$i" 
+		then
+			echo "Error: el Fichero $1 ya existe"
+			exit 3
+		fi
+	done
+
+	#Otra forma de hacerlo con menos líneas sería:
+	#if test -e $1
+	#then
+	#	if test -f $1
+	#	then
+	#		echo "Error: el Fichero $1 ya existe"
+	#		exit 3
+	#	fi
+	#fi
+	
+
+#FIN CONTROL ERRORES ARGUMENTOS DE ENTRADA
+
+touch ./$1.c
+chmod 700 ./$1.c
+echo "/* TÍTULO: $1.c" >> ./$1.c
+echo " * AUTOR:  Iván Martín Gómez" >> ./$1.c
+echo " *" >> ./$1.c
+echo " * Sintaxis: nombre_programa Argumento1 [Argumento2] ... [Argumento_n-1 [Argumento_n]]" >> ./$1.c
+echo " *" >> ./$1.c
+echo " * Argumentos Entrada: (los que están entre [] son opcionales)" >> ./$1.c
+echo " * 		Argumento 1:    -->" >> ./$1.c
+echo " * 		Argumento 2: [] -->" >> ./$1.c
+echo " * 		Argumento n: [] -->" >> ./$1.c
+echo " *" >> ./$1.c
+echo " * Salida:" >> ./$1.c
+echo " *" >> ./$1.c
+echo " * Errores:" >> ./$1.c
+echo " * 		Error 1:" >> ./$1.c
+echo " * 		Error 2:" >> ./$1.c
+echo " * 		Error n:" >> ./$1.c
+echo " *" >> ./$1.c
+echo " * Descripción:" >> ./$1.c
+echo " *" >> ./$1.c
+echo " *" >> ./$1.c
+echo " */" >> ./$1.c
+echo "//----------------------------------------------------------------------------" >> ./$1.c
+echo "//LIBRERÍAS ESTANDAR DE C (entre < >). YA PREDEFINIDAS EN EL SISTEMA. El compilador toma el código que hay en stdio.h y lo "pega" en el Fichero.c donde hayamos hecho el '#include'
+" >> ./$1.c
+echo "#include <stdio.h>" >> ./$1.c
+echo "#include <stdlib.h>" >> ./$1.c
+echo "#include <string.h>" >> ./$1.c
+echo >> ./$1.c
+echo "//LIBRERÍAS PROPIAS (entre \" \")" >> ./$1.c
+echo "//#include \"lireria.h\"" >> ./$1.c
+echo >> ./$1.c
+echo >> ./$1.c
+echo >> ./$1.c
+echo "//(1)Mandatos, (2)Llamadas al Sistema, (3)Funciones de Biblioteca
+">> ./$1.c
+echo "//Cuando queremos agregar una biblioteca con extensión .a utilizar "INSTRUCCIONES_ECLIPSE.rtf"
+">> ./$1.c
+echo >> ./$1.c
+echo >> ./$1.c
+echo "// CABECERAS FUNCIONES UTILIZADAS DENTRO DE MAIN">> ./$1.c
+echo "	// CABECERA FUNCION 1">> ./$1.c
+echo "		char *nombre_funcion_1(char *argumento_in);">> ./$1.c
+echo "	// FIN CABECERA FUNCION 1">> ./$1.c
+echo "	//---------------------------------">> ./$1.c
+echo "	// CABECERA FUNCION 2">> ./$1.c
+echo "		//tipo_out nombreFuncion2(tipo_in Arg1_in, Arg2_in,..., Argn_in);
+">> ./$1.c
+echo "	// FIN CABECERA FUNCION 2">> ./$1.c
+echo "	//---------------------------------">> ./$1.c
+echo "	// CABECERA FUNCION N">> ./$1.c
+echo "		//tipo_out nombreFuncionN(tipo_in Arg1_in, Arg2_in,..., Argn_in);
+">> ./$1.c
+echo "	// FIN CABECERA FUNCION N">> ./$1.c
+echo "// FIN CABECERAS FUNCIONES UTILIZADAS DENTRO DE MAIN">> ./$1.c
+echo "//---------------------------------">> ./$1.c
+echo >> ./$1.c
+echo "// EMPIEZA FUNCION MAIN" >> ./$1.c
+echo >> ./$1.c
+echo "int main (int argc, char *argv[], char *envp[]){" >> ./$1.c
+echo >> ./$1.c
+echo "	//Notas :">> ./$1.c
+echo "	//	Nota 1: **argv=*argv[]=argv[][]">> ./$1.c
+echo "	// 	Nota 2: true=1, false =0">> ./$1.c
+echo "	//	Nota 3: NULL es una constante. var=NULL ==> if(!var) ==>0">> ./$1.c
+echo "	//  	Nota 4: Violaciónes de Segmento típicas: Tipo 1: intentar acceder a un Apuntador que esta apuntando a NULL">> ./$1.c
+echo "	//						 Tipo 2: intentar indexar un vector o array en una posición que no existe">> ./$1.c
+echo >> ./$1.c
+echo "		printf(\"EMPIEZA EL PROGRAMA\n\");" >> ./$1.c
+echo >> ./$1.c
+echo "// ZONA DE DECLARACION DE VARIABLES GLOBALES" >> ./$1.c
+echo "		int i;" >> ./$1.c
+echo "		char buf[1024];">> ./$1.c
+echo "		char **lineasTexto;">> ./$1.c
+echo "		char lista[100]; // Si quiero un array donde almacenar char's, debo inicializar así lista para después poder indexarla">> ./$1.c
+echo "		pid_t pid_fork;// Lo que devuelve la Llamada al Sistema fork() no es un int (aunque lo parezca), si no una variable de tipo pid_t. Lo que tiene de especial la variable de tipo pid_t, es que la variable pid_t cambia su valor dependiendo de cuál sea el Proceso desde el que la estamos consultando">> ./$1.c 
+echo >> ./$1.c
+echo >> ./$1.c
+echo >> ./$1.c
+echo "// FIN ZONA DE DECLARACION DE VARIABLES GLOBALES" >> ./$1.c
+echo "//------------------------------------" >> ./$1.c
+echo "// ZONA DE PARSEO (Parsear Mandato = Tokenizar Mandato)
+" >> ./$1.c
+echo "//		- Un token es un elemento atómico
+">> ./$1.c
+echo "//		- Tokenizar consiste en dividir un String en">> ./$1.c
+echo "//		  varios Tokens separados por un delimitador
+">> ./$1.c
+echo "//		- Un tokens debe cumplir con una Gramática y para comprobar que">> ./$1.c
+echo "//		  un Token pertenece a un cierto Lenguaje es necesario utilizar un">> ./$1.c
+echo "//		  analizador Léxico (¿Quizás relacionado con AFD y AFN: Asignatura LenguajesFormales)?)">> ./$1.c
+echo >> ./$1.c
+echo "//		- Hay una Función de Biblioteca strtok(3) que es muy útil para tokenizar.">> ./$1.c
+echo "//			char *str;">> ./$1.c
+echo "//			char *token;">> ./$1.c
+echo "//			str = PATH; PATH="string_1:string_2:...:string_n"">> ./$1.c
+echo "//			token=strtok(str,":");  Almacena en 'token' string_1">> ./$1.c
+echo "//			token=strtok(NULL,":"); Almacena en 'token' string_2. Lo que pasa aquí es que ">> ./$1.c
+echo "//					       el Indicador de Posición se ha quedado en el primer ':' después ">> ./$1.c
+echo "//					       de llamar por primera vez a strtok(), y con NULL le indicamos">> ./$1.c
+echo "//					       que se fije donde está apuntando el Indicador de Posición.">> ./$1.c
+echo >> ./$1.c
+echo "//			if(token==NULL);       Si token=NULL significa que hemos llegado al final de lo que contiene str, es decir,">> ./$1.c
+echo "//					       al final de lo que contiene la variable PATH. No confundir este">> ./$1.c
+echo "//					       NULL que devuelve la Función strtok(), con el NULL de antes que le pasamos como">> ./$1.c
+echo "//					       Argumento de entrada a la función strtok().">> ./$1.c
+echo >> ./$1.c
+echo >> ./$1.c
+echo >> ./$1.c
+
+echo "		printf(\"Tokenizamos el Mandato:\n\");" >> ./$1.c
+echo "		printf(\"--> Se han recibido %i Argumento/s:\n\",argc-1);" >> ./$1.c
+echo "		for ( i=0; i<argc;i=i+1){" >> ./$1.c
+echo "			if(i==0){" >> ./$1.c
+echo "				printf(\"---- El nombre del mandato es: %s\n\",argv[0]);" >> ./$1.c
+echo "			}else{" >> ./$1.c
+echo "				printf(\"---- Argumento %i:             %s\n\",i,argv[i]);" >> ./$1.c
+echo "			}" >> ./$1.c
+echo "		}" >> ./$1.c
+echo "		printf(\"------------------------------------------------------\n\");" >> ./$1.c
+echo "		printf(\"\n\");" >> ./$1.c
+echo "// FIN ZONA DE PARSEO" >> ./$1.c
+echo "//----------------------------------" >> ./$1.c
+echo "// ZONA DE CONTROL ERRORES ARGUMENTOS" >> ./$1.c
+echo "		if(argc==1){ //Hemos recibido 0 Argumentos:" >> ./$1.c
+echo "			/*printf(\"usage: nombre_programa Argumento1 [Argumento2] ... [Argumento_n-1 [Argumento_n]]\");" >> ./$1.c
+echo "			return 1;*/" >> ./$1.c
+echo "		}" >> ./$1.c
+echo "		if(argc==2){ //Hemos recibido 1 Argumento:" >> ./$1.c
+echo "			/*printf(\"Error nombre_programa: explicación error: %s\n\",argv[1]);" >> ./$1.c
+echo "			return 2;	*/" >> ./$1.c
+echo "		}" >> ./$1.c
+echo "		if(argc==3){//Hemos recibido 2 Argumentos:" >> ./$1.c
+echo "			/*printf(\"Error nombre_programa: explicación error: %s\n\",argv[1]);" >> ./$1.c
+echo "			return 3;	*/" >> ./$1.c
+echo "		}" >> ./$1.c
+echo "		if(argc > 3){//Hemos recibido más de 3 Argumentos:" >> ./$1.c
+echo >> ./$1.c
+echo "		}" >> ./$1.c
+echo >> ./$1.c
+echo "// FIN DE CONTROL ERRORES ARGUMENTOS" >> ./$1.c
+echo "//---------------------------------" >> ./$1.c
+echo "// EMPIEZA FUNCIONALIDAD PROGRAMA" >> ./$1.c
+echo "">> ./$1.c
+echo "		//Reserva Memoria Dinámica">> ./$1.c
+echo "		lineasTexto = (char**)malloc(1024* N); //N es un dato que recibimos como Argumento en *argv[]. 1024 coincide con el tamaño de la variable 'buf'">> ./$1.c
+echo "		//Control Errores Reserva Memoria Dinámica">> ./$1.c
+echo "		if (lineasTexto == NULL) {">> ./$1.c
+echo "			fprintf(stderr, \"Error reservando memoria dinámica con malloc()\n\");">> ./$1.c
+echo "			return -3;">> ./$1.c
+echo "		}">> ./$1.c
+echo "		//Reserva Memoria Dinámica">> ./$1.c
+echo "		while(i<N){">> ./$1.c
+echo "			lineasTexto[i] = (char*)malloc(1024);">> ./$1.c
+echo "			//Control Errores Reserva Memoria Dinámica">> ./$1.c
+echo "			if (lineasTexto == NULL) {">> ./$1.c
+echo "				fprintf(stderr, \"Error reservando memoria dinámica con malloc()\n\");">> ./$1.c
+echo "				return -3;">> ./$1.c
+echo "			}">> ./$1.c
+echo "			i++;">> ./$1.c
+echo "		}">> ./$1.c
+echo "		//Ahora ya podemos tratar a lineasTexto como un Array de N filas por 1024 columnas">> ./$1.c
+echo "">> ./$1.c
+echo "		//Incluir estructura básica para leer de teclado">> ./$1.c
+echo "		i=0;">> ./$1.c
+echo "		while(fgets(buf, 1024, stdin) != NULL){">> ./$1.c
+echo "			if(i<=N){">> ./$1.c
+echo "				strcpy(lineasTexto[i],buf);">> ./$1.c
+echo "				i++;">> ./$1.c
+echo "			}">> ./$1.c
+echo "		}">> ./$1.c
+echo "">> ./$1.c
+echo "		//Liberar Memoria Dinámica">> ./$1.c
+echo "		for(z=0;z<N;z++){">> ./$1.c
+echo "			free(lineasTexto[z]);">> ./$1.c
+echo "		}">> ./$1.c
+echo "		free(lineasTexto); //Liberamos Memoria Dinámica">> ./$1.c
+echo "		//Apuntamos a la primera posición de stdin rewind()">> ./$1.c
+echo "		   rewind(stdin); // Colocamos el indicador de posición de fichero al principio del Fichero stdin">> ./$1.c
+echo "">> ./$1.c
+echo "		pid_fork = fork();//No confundir lo que devuelve la Llamada al Sistema fork() con el pid (Proccess Identifier -Único- para cada proceso) de un Proceso, aunque típicamente se tiende a llamar a la variable de tipo pid_t, que devuelve el fork(), 'pid', NO ES LO MISMO, el pid único para cada Proceso se consulta utilizando la Llamada al Sistema getpid(). Por todo lo dicho anteriormente, no llamo a lo que devuelve la Llamada al Sistema fork() 'pid', si no que lo llamo 'pid_fork'">> ./$1.c
+echo "">> ./$1.c
+
+echo "//---------------------------------" >> ./$1.c
+echo "}// FIN FUNCIÓN MAIN" >> ./$1.c
+echo "//---------------------------------" >> ./$1.c
+echo "// IMPLEMENTACIONES FUNCIONES CUYAS CABECERAS ESTAN DEFINIDAS AL PRINCIPIO DE ESTE DOCUMENTO Y QUE SON UTILIZADAS DENTRO DE MAIN">> ./$1.c
+echo "	//IMPORTANTE: 	   No debemos devolver directamente el apuntador *buf, ya que *buf">> ./$1.c
+echo "	// 		   es una variable Local. Haciendo strdup() lo que hacemos es crear una copia">> ./$1.c
+echo "	// 		   de lo que hay donde apunta *buf, es decir, se crea una nueva zona de memoria,">> ./$1.c
+echo "	// 		   y devolvemos la copia. Este problema surge porque C puede trabajar a muy bajo">> ./$1.c
+echo "	// 		   nivel y esto es bueno para algunas cosas pero muy peligrosas para otras, este es">> ./$1.c
+echo "	// 		   un claro ejemplo del cuidado que hay que tener. En otros lenguajes de más alto nivel">> ./$1.c
+echo "	// 		   esta copia que aquí hacemos con strdup() se hace de forma interna si necesidad de">> ./$1.c
+echo "	// 		   explicitarlo en el código que redacta el programador.">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "	//IMPLEMENTACION FUNCION 1">> ./$1.c
+echo "	char * nombre_funcion_1(char *cmd){">> ./$1.c
+echo "		// ZONA DE DECLARACION DE VARIABLES LOCALES A LA FUNCIÓN 1">> ./$1.c
+echo "				//int i;">> ./$1.c
+echo "				char *buf;">> ./$1.c
+echo "		// FIN ZONA DE DECLARACION DE VARIABLES LOCALES A LA FUNCIÓN 1">> ./$1.c
+echo "		//---------------------------------">> ./$1.c
+echo "		// ZONA DE CONTROL ERRORES ARGUMENTOS">> ./$1.c
+echo "">> ./$1.c
+echo "		// FIN DE CONTROL ERRORES ARGUMENTOS">> ./$1.c
+echo "		//---------------------------------">> ./$1.c
+echo "		// ZONA DE FUNCIONALIDAD FUNCION">> ./$1.c
+echo "">> ./$1.c
+echo "		// FIN ZONA DE FUNCIONALIDAD FUNCION">> ./$1.c
+echo "">> ./$1.c
+echo "		//IMPORTANTE: 	   No debemos devolver directamente el apuntador *buf, ya que *buf">> ./$1.c
+echo "		// 		   es una variable Local. Haciendo strdup() lo que hacemos es crear una copia">> ./$1.c
+echo "		// 		   de lo que hay donde apunta *buf, es decir, se crea una nueva zona de memoria,">> ./$1.c
+echo "		// 		   y devolvemos la copia. Este problema surge porque C puede trabajar a muy bajo">> ./$1.c
+echo "		// 		   nivel y esto es bueno para algunas cosas pero muy peligrosas para otras, este es">> ./$1.c
+echo "		// 		   un claro ejemplo del cuidado que hay que tener. En otros lenguajes de más alto nivel">> ./$1.c
+echo "		// 		   esta copia que aquí hacemos con strdup() se hace de forma interna si necesidad de">> ./$1.c
+echo "		// 		   explicitarlo en el código que redacta el programador.">> ./$1.c
+echo "		return strdup(buf);">> ./$1.c
+echo "	}">> ./$1.c
+echo "	//FIN IMPLEMENTACION FUNCION 1">> ./$1.c
+echo "	//---------------------------------">> ./$1.c
+echo "	//IMPLEMENTACION FUNCION 2">> ./$1.c
+echo "		//tipo_out nombreFuncion2(tipo_in Arg1_in, Arg2_in,..., Argn_in){">> ./$1.c
+echo "			//...">> ./$1.c
+echo "			//return;(si tipo_out =void) ó return algo del mismo tipo_out; (nota: recordar IMPORTANTE)">> ./$1.c
+echo "		//}">> ./$1.c
+echo "	//FIN IMPLEMENTACION FUNCION 2">> ./$1.c
+echo "	//---------------------------------">> ./$1.c
+echo "	//IMPLEMENTACION FUNCION N">> ./$1.c
+echo "		//tipo_out nombreFuncionN(tipo_in Arg1_in, Arg2_in,..., Argn_in){">> ./$1.c
+echo "			//...">> ./$1.c
+echo "			//return;(si tipo_out =void) ó return algo del mismo tipo_out; (nota: recordar IMPORTANTE)">> ./$1.c
+echo "		//}">> ./$1.c
+echo "	//FIN IMPLEMENTACION FUNCION N">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "// FIN IMPLEMENTACIONES FUNCIONES CUYAS CABAECERAS ESTAN DEFINIDAS AL PRINCIPIO DE ESTE DOCUMENTO UTILIZADAS DENTRO DE MAIN
+">> ./$1.c

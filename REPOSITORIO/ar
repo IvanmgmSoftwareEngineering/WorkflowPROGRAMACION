@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Descripción del Script: Actualiza los cambios realizados en local en el repositorio en #remoto
+
+#		Argumentos que debe recibir: Comentario del commit
+
+#		Salida: Devuelve por pantalla mensajes devueltos por mandato git
+
+
+# Control de Argumentos de Entrada
+if test $# -eq 0	# No hay Argumentos
+then
+	echo "Error: falta comentario del commit"
+	exit 1
+
+fi
+
+
+# FIN Control de Argumentos de Entrada
+
+# Empieza la funcionalidad del Script
+echo $*
+git add .
+git commit -m "$*"
+git push -u origin master
+
+# FIN Script
+exit 0

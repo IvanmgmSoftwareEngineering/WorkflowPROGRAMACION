@@ -1,0 +1,118 @@
+#!/bin/bash
+
+# Crea un nuevo fichero en el directorio actual, con el nombre sin espacios que le pasemos como argumento y con permisos de Ejecución para el propietario. Adicionalmente el fichero contendrá en la primera línea #!/bin/bash y algunos comentarios adicionales
+
+# Control Errores Argumentos
+
+if test $# -eq 0
+then
+	echo "Error: por favor indique el nombre del fichero"
+	exit 1
+fi
+
+if test $# -gt 1
+then
+	echo "Error: el numero de argumentos es mayor que 1"
+	exit 2
+fi
+
+for i in `ls ./`
+do
+	if test "$1.txt" = "$i" 
+	then
+		echo "Error: el fichero ya existe"
+		exit 3
+	fi
+done
+
+# FIN Control Errores de Argumentos
+
+touch ./$1.txt
+chmod 700 ./$1.txt
+echo "#!/bin/bash" >> ./$1.txt
+echo "#--------------------------------------------------------------------------------------" >> ./$1.txt
+echo "# Nombre del Script:" >> ./$1.txt
+echo "# Autor:" >> ./$1.txt
+echo "# Fecha:" >> ./$1.txt
+echo "" >> ./$1.txt
+echo "#		  Argumentos entrada: [] para indicar que son opcionales" >> ./$1.txt
+echo "			#Argumento 1: " >> ./$1.txt
+echo "			#Argumento 2:   " >> ./$1.txt
+echo "			#Argumento n:   " >> ./$1.txt
+echo "" >> ./$1.txt
+echo "#		Salida: " >> ./$1.txt
+echo "" >> ./$1.txt
+echo "" >> ./$1.txt
+echo "#		Descripción:" >> ./$1.txt
+echo "" >> ./$1.txt
+echo "#---------------------------------------------------------------------------------------" >> ./$1.txt
+echo "" >> ./$1.txt
+echo "#---------------------------------------------------------------------------------------" >> ./$1.txt
+echo "# Control de Argumentos de Entrada" >> ./$1.txt
+echo "if test \$# -eq 0	# No hay Argumentos" >> ./$1.txt
+echo "then" >> ./$1.txt
+echo "	#Opción 1: Mostramos error">> ./$1.txt
+echo "		#echo "Error: no se ha recibido ningún Argumento"">> ./$1.txt
+echo "		#exit 1">> ./$1.txt
+echo "">> ./$1.txt
+echo "	#Opción 1: trabajamos desde el Directorio de trabajo Actual">> ./$1.txt
+echo "		#directorio=$PWD">> ./$1.txt
+echo >> ./$1.txt
+echo "fi" >> ./$1.txt
+echo >> ./$1.txt
+echo "if test \$# -eq 1	# Hay 1 Argumento" >> ./$1.txt
+echo "then" >> ./$1.txt
+echo >> ./$1.txt
+echo >> ./$1.txt
+echo "	#if ! test -e $1">> ./$1.txt
+echo "	#then ">> ./$1.txt
+echo "		#echo "Error: el Archivo $1 no existe"">> ./$1.txt
+echo "		#exit 2">> ./$1.txt
+echo "	#fi">> ./$1.txt
+echo "">> ./$1.txt
+echo "	#No hay que comprobar las dos siguientes condiciones: comprobamos una de las dos">> ./$1.txt
+echo "">> ./$1.txt
+echo "	#Condición 1: El Argumento recibido No(!) es un Archivo de tipo Fichero">> ./$1.txt
+echo "	#if ! test -f $1">> ./$1.txt
+echo "	#then ">> ./$1.txt
+echo "		#echo "Error: el Archivo $1 no es un Fichero"">> ./$1.txt
+echo "		#exit 3">> ./$1.txt
+echo "	#fi">> ./$1.txt
+echo "">> ./$1.txt
+echo "	#Condición 2: El Argumento recibido No(!) es un Archivo de tipo Directorio">> ./$1.txt
+echo "	#if ! test -d $1">> ./$1.txt
+echo "	#then ">> ./$1.txt
+echo "		#echo "Error: el Archivo $1 no es un Directorio"">> ./$1.txt
+echo "		#exit 4">> ./$1.txt
+echo "	#fi">> ./$1.txt
+echo "">> ./$1.txt
+echo "	#Si llegamos hasta aquí todo ha ido bien">> ./$1.txt
+echo "	#directorio=$1">> ./$1.txt
+echo "">> ./$1.txt
+echo "fi">> ./$1.txt
+echo "">> ./$1.txt
+echo "fi" >> ./$1.txt
+echo >> ./$1.txt
+echo "if test \$# -gt 1	# Hay 2 o más Argumentos" >> ./$1.txt
+echo "then" >> ./$1.txt
+echo "	#echo "Error: se han recibido 2 Argumentos o más"">> ./$1.txt
+echo "	#exit 5">> ./$1.txt
+echo "fi" >> ./$1.txt
+echo "# FIN Control de Argumentos de Entrada" >> ./$1.txt
+echo "#---------------------------------------------------------------------------------------" >> ./$1.txt
+echo "# Empieza la funcionalidad del Script" >> ./$1.txt
+echo >> ./$1.txt
+echo >> ./$1.txt
+echo >> ./$1.txt
+echo >> ./$1.txt
+echo >> ./$1.txt
+echo >> ./$1.txt
+echo >> ./$1.txt
+echo "#---------------------------------------------------------------------------------------" >> ./$1.txt
+echo "# FIN Script" >> ./$1.txt
+echo "exit 0" >> ./$1.txt
+
+mv ./$1.txt $1
+open -a TextEdit ./$1
+
+exit 0

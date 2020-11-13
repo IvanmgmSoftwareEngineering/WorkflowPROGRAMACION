@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Descripción del Script: Inicia el GIT en el directorio actual y lo enlaza con el Sitio #Web GitHub
+
+#		Argumentos que debe recibir: url del repositorio remoto. Está url se toma #del repositorio creado previamente en el sitio Web GitHub
+
+#		Salida: Devuelve por pantalla los resultados de ejecutar los mandatos de #asociados al mandato git
+
+
+# Control de Argumentos de Entrada
+if test $# -eq 0	# No hay Argumentos
+then
+	echo "Error: falta la url del repositorio remoto"
+	exit 1
+fi
+
+if test $# -gt 1	# Hay 2 o más Argumentos
+then
+	echo "Error: se ha introducido más de un argumento"
+	exit 2
+
+fi
+# FIN Control de Argumentos de Entrada
+
+# Empieza la funcionalidad del Script
+
+git init
+git add .
+git commit -m "first commit"
+git remote add origin $1
+git push -u origin master
+
+# FIN Script
+exit 0

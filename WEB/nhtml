@@ -1,0 +1,63 @@
+#!/bin/bash
+
+#CONTROL ERRORES ARGUMENTOS DE ENTRADA
+	if test $# -eq 0
+	then
+		echo "Error: por favor indique el nombre del fichero"
+		exit 1
+	fi
+
+	if test $# -gt 1
+	then
+		echo "Error: el numero de argumentos es mayor que 1"
+		exit 2
+	fi
+
+	if test -e $1.html
+	then
+		if test -f $1.html
+		then
+			echo "Error: el Fichero $1.html ya existe"
+			exit 3
+		fi
+	fi
+	
+
+#FIN CONTROL ERRORES ARGUMENTOS DE ENTRADA
+
+touch ./$1
+chmod 700 ./$1
+echo "<!--" >> ./$1
+echo "     TÍTULO: 	  $1.html" >> ./$1
+echo "     AUTOR: 	  Iván Martín Gómez" >> ./$1
+echo "     DESCRIPCIÓN: Este Fichero .html ..." >> ./$1
+echo "-->" >> ./$1
+echo "  " >> ./$1
+echo "<!DOCTYPE html>" >> ./$1
+echo "<!-- Empieza el HTML -->" >> ./$1
+echo "<html>" >> ./$1
+echo "	<!-- Empieza el HEAD -->" >> ./$1
+echo "	<head>" >> ./$1
+echo "		<meta charset="ISO-8859-1">" >> ./$1
+echo "		<title>Clase9:JavaScript</title>" >> ./$1
+echo "		<!-- Bootstrap CSS, debe ir antes que cualquier otra hoja de estilo -->" >> ./$1
+echo "   		 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">" >> ./$1
+echo "		<!-- CSS's: links otras hojas de estilo -->" >> ./$1
+echo " " >> ./$1
+echo " " >> ./$1
+echo "		<!-- FIN CSS's: links otras hojas de estilo -->" >> ./$1
+echo "	<!-- Termina el HEAD -->" >> ./$1
+echo "	</head>" >> ./$1
+echo "<!-- --------------------------------------------------------- -->" >> ./$1
+echo "	<!-- Empieza el BODY -->" >> ./$1
+echo "	<body>" >> ./$1
+echo " " >> ./$1
+echo " " >> ./$1
+echo " " >> ./$1
+echo " 	<!-- Termina el BODY -->" >> ./$1
+echo " 	</body>" >> ./$1
+echo "<!-- --------------------------------------------------------- -->" >> ./$1
+echo "<!-- Termina el HTML -->" >> ./$1
+echo "<!-- --------------------------------------------------------- -->" >> ./$1
+echo "</html>" >> ./$1
+mv ./$1 ./$1.html
