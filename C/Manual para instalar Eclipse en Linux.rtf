@@ -1,0 +1,77 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2576
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fswiss\fcharset0 Helvetica-BoldOblique;}
+{\colortbl;\red255\green255\blue255;\red251\green0\blue7;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c100000\c12195\c0;\cssrgb\c0\c1\c1;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww37720\viewh16280\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs48 \cf0 NOTA: En Linux todo lo que descargue debo lanzarlo desde terminal. Por ejemplo si me descargo eclipse en la carpeta Downloads, para lanzarlo me situ\'f3 dentro de la carpeta eclipse despu\'e9s de descomprimirlo y ejecuto el mandato: ./eclipse-inst\
+\
+NOTA: (COMPARTIR CARPETA CON M\'c1QUINA VIRTUAL).Esta carpeta ser\'e1 visible desde el SO del Mac y desde el SO Linux instalado en la maquina virtual VirtualBox. Para hacerlo debo instalar Guest additions.\
+Ir a las opciones de carpetas compartidas en VirtualBox y rellenar los campos (Nunca marcar las opciones "Auto-mount" y "Make Permanent"). Cuando este en el sistema operativo creo una carpeta llamada "Compartida" donde quiero que se monte la carpeta que voy a compartir y ejecuto:\
+sudo mount -t vboxsf "nombre_carpeta_host" /home/imgm/Compartida\
+\
+Para desmontarla: sudo umount -t vboxsf "nombre_carpeta_host" \
+\
+(Esta carpeta ser\'e1 visible desde el SO del Mac y desde el SO Linux instalado en la maquina virtual VirtualBox. Para hacerlo debo instalar Guest additions. \
+Despu\'e9s de instalar y reiniciar puede haber un problema de Bucle de Inicio de Sesi\'f3n. Para solucionarlo, voy a las opciones de carpetas compartidas de virtualBox y desmarco las opciones de "Auto-mount" y "Make Permanent". reinicio y deber\'eda entrar en el sistema operativo.)\
+\
+\
+------------------------------------------------------------------------------------------\
+\
+1\'ba) instalar una maquina virtual --> VirtualBox\
+2\'ba) instalar una versi\'f3n de Linux que vaya bien con Mac --> Elementary OS\
+3\'ba) readaptar resoluci\'f3n --> dentro Elementary OS --> Pesta\'f1a arriba izquierda Applications\
+    --> Systems tools --> System settings --> Display --> pulsamos en el engranaje arriba 	izquierda pantalla azul y seleccionamos 2560 x 1600\
+4\'ba) Instalamos eclipse siguiendo los pasos que aparecen en : https://robferguson.org/blog/2016/03/29/how-to-install-git-maven-and-eclipse-on-elementary-os/ salvo algunas modificaciones:\
+\
+	-- Instalamos git tal cu\'e1l\
+	-- Instalamos maven tal cu\'e1l pero el resultado cuando hagamos mvn --version ser\'e1 que tendremos instalado maven y no maven 3. Aparentemente no es relevante esta diferencia para conseguir un resultado satisfactorio\
+	-- Descargamos la \'faltima versi\'f3n de Eclipse Java para Linux 64bits. (Notar que devemos descargar la version de Java y no la version de C/C++)\
+	-- Descomprimimos el .tar.gz en la propia carpeta Downloads\
+	-- En terminal nos situamos en la carpeta Downloads y movemos la carpeta eclipse a la carpeta opt mediante el siguiente mandato: sudo mv eclipse/ /opt/eclipse/\
+	-- Hasta aqu\'ed ya tenemos eclipse instalado en nuestro sistema operativo Elementary OS. \
+	-- Ahora creamos un acceso directo: para ello creamos un fichero mediante el siguiente mandato: sudo nano /usr/share/applications/eclipse.desktop y lo rellenemos con la siguiente info:\
+\
+[Desktop Entry]\
+Encoding=UTF-8\
+Name=Eclipse Mars\
+Comment=Integrated Development Environment\
+Exec=/opt/eclipse/eclipse-vm /usr/lib/jvm/java-
+\f1\i\b \cf2 7
+\f0\i0\b0 \cf0 -openjdk-amd64/bin (\cf2 lo que hay en rojo cambia hay que a\'f1adirlo\cf0 )\
+Icon=/opt/eclipse/icon.xpm\
+Categories=Application;Development;Java;IDE\
+Type=Application\
+Terminal=false\
+\
+Para guardar pulsamos ctrl + O (letra no numero) y despu\'e9s salimos del editor Nano utilizando ctrl + X\
+\
+	-- Por \'faltimo modificamos el fichero : sudo nano /opt/eclipse/eclipse\cf3 .ini\cf0 \
+\
+...\
+--launcher.appendVmargs	    <-- Esta l\'ednea esta presente en el fichero\
+--launcher.GTK_version      <-- Esta l\'ednea hay que agregarla\
+2			    <-- Esta l\'ednea hay que agregarla\
+...	\
+\
+\
+	-- YA ESTA Eclipse instalado!! ;) Vamos a la lupa y escribimos Eclipse y pulsamos sobre la App\
+\
+	-- Agregar el paquete de C/C++: \
+		-- Descargar eclipse Installer (Es un programa de escritorio que me permite descargar extensiones de eclipse)\
+		-- Descomprimo el fichero .tar.gz en la carpeta Downloads\
+		-- Me situo desde terminal en la carpeta Downloads y ejecuto el mandato:\
+			./eclipse-installer/eclipse-inst\
+		-- Selecciono Eclipse IDE C/C++ Developers y sigo los pasos que aparecen en: https://www.hiroom2.com/2018/05/14/ubuntu-1804-eclipse-cdt-en/\
+\
+	--Para abrir eclipse con la extension C/C++ debo ejecutar el mandato:\
+		./home/imgm/eclipse/cpp-2020-06/eclipse/eclipse\
+\
+	--Instalar el compilador gcc: sudo apt install gcc y sudo set install build-esential (Para que los proyectos traigan los includes de las librer\'edas b\'e1sicas)\
+\
+		\
+\
+\
+\
+	 }

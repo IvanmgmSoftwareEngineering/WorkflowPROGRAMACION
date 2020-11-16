@@ -40,6 +40,8 @@ touch ./$1.c
 chmod 700 ./$1.c
 echo "/* TÍTULO: $1.c" >> ./$1.c
 echo " * AUTOR:  Iván Martín Gómez" >> ./$1.c
+fecha=`date`
+echo " * FECHA:  $fecha" >> ./$1.c
 echo " *" >> ./$1.c
 echo " * Sintaxis: nombre_programa Argumento1 [Argumento2] ... [Argumento_n-1 [Argumento_n]]" >> ./$1.c
 echo " *" >> ./$1.c
@@ -60,21 +62,21 @@ echo " *" >> ./$1.c
 echo " *" >> ./$1.c
 echo " */" >> ./$1.c
 echo "//----------------------------------------------------------------------------" >> ./$1.c
-echo "//LIBRERÍAS ESTANDAR DE C (entre < >). YA PREDEFINIDAS EN EL SISTEMA. El compilador toma el código que hay en stdio.h y lo "pega" en el Fichero.c donde hayamos hecho el '#include'
-" >> ./$1.c
+echo "//LIBRERÍAS ESTANDAR DE C (entre < >). YA PREDEFINIDAS EN EL SISTEMA. El compilador toma el código que hay en stdio.h y lo "pega" en el Fichero.c donde hayamos hecho el '#include'" >> ./$1.c
 echo "#include <stdio.h>" >> ./$1.c
 echo "#include <stdlib.h>" >> ./$1.c
 echo "#include <string.h>" >> ./$1.c
+echo "#include <unistd.h> // para Llamada al Sistema fork()" >> ./$1.c
+echo "#include <signal.h> // para Llamada al Sistema signal()" >> ./$1.c
+echo "#include <ctype.h>  // para Función de Biblioteca toupper(); pasa un char de lower case to upper case" >> ./$1.c
 echo >> ./$1.c
 echo "//LIBRERÍAS PROPIAS (entre \" \")" >> ./$1.c
 echo "//#include \"lireria.h\"" >> ./$1.c
+echo "//Cuando queremos agregar una Librería con extension .a utilizar manual "INSTRUCCIONES_ECLIPSE.rtf situado en el Directorio WORKFLOWProgramacion"">> ./$1.c
 echo >> ./$1.c
 echo >> ./$1.c
-echo >> ./$1.c
-echo "//(1)Mandatos, (2)Llamadas al Sistema, (3)Funciones de Biblioteca
-">> ./$1.c
-echo "//Cuando queremos agregar una biblioteca con extensión .a utilizar "INSTRUCCIONES_ECLIPSE.rtf"
-">> ./$1.c
+echo "//ALGUNAS SECCIONES DEL MANUAL QUE ES CONVENIENTE SABER:">> ./$1.c
+echo "//Sección (1)Mandatos, Sección (2)Llamadas al Sistema, Sección (3)Funciones de Biblioteca">> ./$1.c
 echo >> ./$1.c
 echo >> ./$1.c
 echo "// CABECERAS FUNCIONES UTILIZADAS DENTRO DE MAIN">> ./$1.c
@@ -83,18 +85,37 @@ echo "		char *nombre_funcion_1(char *argumento_in);">> ./$1.c
 echo "	// FIN CABECERA FUNCION 1">> ./$1.c
 echo "	//---------------------------------">> ./$1.c
 echo "	// CABECERA FUNCION 2">> ./$1.c
-echo "		//tipo_out nombreFuncion2(tipo_in Arg1_in, Arg2_in,..., Argn_in);
-">> ./$1.c
+echo "		//tipo_out nombreFuncion2(tipo_in1 Arg1_in, tipo_in2 Arg2_in,...,tipo_inn Argn_in);">> ./$1.c
 echo "	// FIN CABECERA FUNCION 2">> ./$1.c
 echo "	//---------------------------------">> ./$1.c
+echo "	// CABECERA FUNCION 3: Manejo señales Procesos">> ./$1.c
+echo "		//void manejador_padre(int signal);">> ./$1.c
+echo "	// FIN CABECERA FUNCION 3">> ./$1.c
+echo "	//---------------------------------">> ./$1.c
+echo "	// CABECERA FUNCION 4: Manejo señales Procesos">> ./$1.c
+echo "		//void manejador_hijo_1(int signal);">> ./$1.c
+echo "	// FIN CABECERA FUNCION 4">> ./$1.c
+echo "	//---------------------------------">> ./$1.c
+echo "	// CABECERA FUNCION 5: Manejo señales Procesos">> ./$1.c
+echo "		//void manejador_hijo_2(int signal);">> ./$1.c
+echo "	// FIN CABECERA FUNCION 5">> ./$1.c
+echo "	//---------------------------------">> ./$1.c
 echo "	// CABECERA FUNCION N">> ./$1.c
-echo "		//tipo_out nombreFuncionN(tipo_in Arg1_in, Arg2_in,..., Argn_in);
+echo "		//tipo_out nombreFuncionN(tipo_in1 Arg1_in, tipo_in2 Arg2_in,..., tipo_inn Argn_in);
 ">> ./$1.c
 echo "	// FIN CABECERA FUNCION N">> ./$1.c
 echo "// FIN CABECERAS FUNCIONES UTILIZADAS DENTRO DE MAIN">> ./$1.c
 echo "//---------------------------------">> ./$1.c
 echo >> ./$1.c
 echo "// EMPIEZA FUNCION MAIN" >> ./$1.c
+echo "pid_t pid1_fork; // Variable global para tratar lo que devuelve la Llamada al Sistema fork(2). Se pone aquí fuera porque esta variable para que pueda ser consultada desde las funciones manejadoras() de señales que están fuera del main()">> ./$1.c
+echo "pid_t pid2_fork; // Variable global para tratar lo que devuelve la Llamada al Sistema fork(2). Se pone aquí fuera porque esta variable para que pueda ser consultada desde las funciones manejadoras() de señales que están fuera del main()">> ./$1.c
+echo "pid_t pid3_fork; // Variable global para tratar lo que devuelve la Llamada al Sistema fork(2). Se pone aquí fuera porque esta variable para que pueda ser consultada desde las funciones manejadoras() de señales que están fuera del main()">> ./$1.c
+echo >> ./$1.c
+echo "int fd_tuberia_del_padre_al_hijo[2]; // GLOBAL PORQUE SE GESTIONA EN función fuera del main() (manejadora de señales)
+">> ./$1.c
+echo "int fd_tuberia_del_hijo_al_padre[2]; // GLOBAL PORQUE SE GESTIONA EN función fuera del main() (manejadora de señales)
+">> ./$1.c
 echo >> ./$1.c
 echo "int main (int argc, char *argv[], char *envp[]){" >> ./$1.c
 echo >> ./$1.c
@@ -102,7 +123,7 @@ echo "	//Notas :">> ./$1.c
 echo "	//	Nota 1: **argv=*argv[]=argv[][]">> ./$1.c
 echo "	// 	Nota 2: true=1, false =0">> ./$1.c
 echo "	//	Nota 3: NULL es una constante. var=NULL ==> if(!var) ==>0">> ./$1.c
-echo "	//  	Nota 4: Violaciónes de Segmento típicas: Tipo 1: intentar acceder a un Apuntador que esta apuntando a NULL">> ./$1.c
+echo "	//  	Nota 4: Violaciones de Segmento típicas: Tipo 1: intentar acceder a un Apuntador que esta apuntando a NULL">> ./$1.c
 echo "	//						 Tipo 2: intentar indexar un vector o array en una posición que no existe">> ./$1.c
 echo >> ./$1.c
 echo "		printf(\"EMPIEZA EL PROGRAMA\n\");" >> ./$1.c
@@ -217,21 +238,161 @@ echo "		free(lineasTexto); //Liberamos Memoria Dinámica">> ./$1.c
 echo "		//Apuntamos a la primera posición de stdin rewind()">> ./$1.c
 echo "		   rewind(stdin); // Colocamos el indicador de posición de fichero al principio del Fichero stdin">> ./$1.c
 echo "">> ./$1.c
-echo "		pid_fork = fork();//No confundir lo que devuelve la Llamada al Sistema fork() con el pid (Proccess Identifier -Único- para cada proceso) de un Proceso, aunque típicamente se tiende a llamar a la variable de tipo pid_t, que devuelve el fork(), 'pid', NO ES LO MISMO, el pid único para cada Proceso se consulta utilizando la Llamada al Sistema getpid(). Por todo lo dicho anteriormente, no llamo a lo que devuelve la Llamada al Sistema fork() 'pid', si no que lo llamo 'pid_fork'">> ./$1.c
 echo "">> ./$1.c
+echo "		//ZONA DE PROCESOS">> ./$1.c
+echo "">> ./$1.c
+echo "			//CONCEPTOS PREVIOS:">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "			  //Creación de nuevos Procesos con la Llamada al Sistema fork(2)">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 1: Cuando hacemos un fork() se crea un Proceso Hijo (Copia exacta del código del Padre)">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 2: No confundir lo que devuelve la Llamada al Sistema fork() con el pid (Proccess Identifier -Único- para cada proceso) de un ">> ./$1.c
+echo "				//	  Proceso, aunque típicamente se tiende a llamar a la variable de tipo pid_t, que devuelve el fork(), 'pid', NO ES LO MISMO,">> ./$1.c
+echo "				//	  el pid único para cada Proceso se consulta utilizando la Llamada al Sistema getpid().  Por todo lo dicho anteriormente, ">> ./$1.c
+echo "				//        no llamo a lo que devuelve la Llamada al Sistema fork() 'pid', si no que lo llamo 'pid_fork'">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 3: ">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "			  //Recepción y manejo de señales con Función de Biblioteca signal(3)">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 1: La Función de Biblioteca signal(3) se llama desde el código del Proceso que recibe la señal.">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 2: Tiene un sintaxis 'fea': Ejemplo: signal(SIGINT,manejador). La función manejador recibe como Argumento de entrada un 'int' pero aquí ">> ./$1.c
+echo "				//	  no se especifica. Lo que esta pasando internamente es que la Función de Biblioteca signal(3) le está pasando">> ./$1.c
+echo "				//	  como Argumento la señal SIGINT (que es un entero) a la función, implementada por nosotros, void manejador(int signal)">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 3: Hay dos formas de gestionar las señales:">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  Forma 1: Tenemos una única función 'manejador()' que se encarga de gestionar las señales recibidas en el Padre y en el hijo">> ./$1.c
+echo "				//	  	   -Esta forma de hacerlo implica tener un código en la Función manejador() que nos permita saber si estamos en el Padre o en el Hijo">> ./$1.c
+echo "				//	  	   -Esta forma de hacerlo implica también que signal deberá hacerse desde una zona del código compartida por padre e hijo">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  Forma 2:(ESTA ES LA MEJOR FORMA) Tenemos dos funciones manejadoras: manejador_padre() y manejador_hijo()">> ./$1.c
+echo "				//	  	   que se encarga de gestionar las señales recibidas en el Padre y en el hijo">> ./$1.c
+echo "				//	  	   -Esta forma de hacerlo implica que habrá dos signal: uno para escuchar las señales que recibe el Padre y">> ./$1.c
+echo "				//	   	    otro signal para escuchar las señales que recibe el Hijo">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 4: Algunas señales útiles ">> ./$1.c
+echo "				// Señal SIGINT: Ctrl +C">> ./$1.c
+echo "				// Señal SIGUSR1: Para uso del Programador">> ./$1.c
+echo "				// Señal SIGUSR2: Para uso del Programador">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 6: Ctrl+D no es una señal. Esta secuencia de teclas es utilizada para informar de final de fichero. Ejemplo: si estamos leyendo líneas por teclado en la Entrada Estándar mediante la Función de Biblioteca fgets(3) y queremos que fgets devuelva NULL, pulsando ctrl+d lo conseguimos. ">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 7: Hay dos 'Macros' útiles para la gestión de señales:  ">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  WIFEXITED (status): distinto de cero si el hijo ha terminado">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  WESISTATUS (status): nos permite conocer el valor que ha devuelto el hijo mediante el exit(1). Sólo se puede consultar si WIFEXITED es distinta de cero, es decir, si el hijo ha terminado">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 8: ">> ./$1.c
 
+echo "">> ./$1.c
+echo "				//nota 9: Variable stderr, con un número de error asociado errno y la Función de Biblioteca strerror(3) para gestionar: errores de Mandatos, Llamadas al Sistema y Funciones de biblioteca ">> ./$1.c
+
+echo "">> ./$1.c
+echo "			  //Envío de señales con Mandato Kill(1)">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 1: No hay que malinterpretar la palabra 'Kill'. Este mandato NO se utiliza para matar un Proceso, se utiliza para enviar una señal desde un Proceso ">> ./$1.c
+echo "				//nota 2: El mandato kill(1) se ejecutará desde el código del Proceso que desea enviar la señal. ">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 3: Será útil la Llamada al Sistema getppid(2) para conseguir el pid único del Proceso Padre">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 4: ">> ./$1.c
+echo "">> ./$1.c
+echo "			  //Creación y uso de Tuberías con Comando de Administración de Sistema pipe(8)">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 1: int fd[2]. Este array de 2 enteros se le pasará cómo argumento a pipe()">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 2: La comunicación de una Tubería (una llamada a pipe()) es unidireccional, es decir, si queremos una comunicación bidireccional, entonces se necesitan dos Tuberías (dos llamadas a pipe())">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 3: TODOS LOS PIPES SE CREAN ANTES DEL fork().">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 4: CUIDADO AHORA!! ESTE CONCEPTO ES ESCURRIDIZO:">> ./$1.c
+echo "				//	  CONCEPTO DE HERENCIA DE PIPES: un pipe creado antes del fork() por un padre, es heredado por su hijo. Entonces, cuando utilizamos fd[0] y fd[1], debemos tener cuidado desde que proceso lo estamos haciendo.">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  TUBERÍA 1: envío de datos desde el proceso PADRE --> HIJO">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  	fd_tuberia_padre_hijo[1]; El padre escribe aquí, estando en el proceso padre">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  	fd_tuberia_padre_hijo[0]; El hijo lee aqui, estando en el proceso hijo">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  Debemos cerrar por no usarlos:">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  	fd_tuberia_padre_hijo[0]; El Padre sólo Envía (escribe), el padre no Recibe (no lee) ==> estando en el padre hacemos close (fd_tuberia_padre_hijo[0])">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  	fd_tuberia_padre_hijo[1]; El Hijo sólo Recibe (lee), el Hijo no Envía (no escribe) ==> estando en el hijo hacemos close (fd_tuberia_padre_hijo[1])">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  TUBERÍA 2: envío de datos desde el proceso HIJO --> PADRE">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  	fd_tuberia_hijo_padre[1]; El Hijo escribe aquí, estando en el proceso hijo">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  	fd_tuberia_hijo_padre[0]; El Padre lee aquí, estando en el proceso padre">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  Debemos cerrar por no usarlos:">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  	fd_tuberia_hijo_padre[0]; El Hijo sólo Envía (escribe), el hijo no Recibe (no lee) ==> estando en el hijo hacemos close (fd_tuberia_hijo_padre[0])">> ./$1.c
+echo "">> ./$1.c
+echo "				//	  	fd_tuberia_hijo_padre[1]; El Padre sólo Recibe (lee), el padre no Envía (no escribe) ==> estando en el padre hacemos close (fd_tuberia_hijo_padre[1])">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 5: Las Tuberías se pueden gestionar de dos formas: ">> ./$1.c
+echo "">> ./$1.c
+echo "				//	- Forma 1: Mediante el Uso de Descriptores de Fichero ">> ./$1.c
+echo "				//		   Utilizaremos Llamadas al sistema (2) cómo: write(), read() y close()">> ./$1.c
+echo "">> ./$1.c
+echo "				//	- Forma 2: Mediante el Uso de File * ">> ./$1.c
+echo "				//		   Utilizaremos Funciones de Biblioteca (3) cómo: fopen(), fputs(), fgets() y fclose()">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 6: La lectura del pipe SI es bloqueante. La escritura del pipe NO es bloquearte">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 7: RECORDAR QUE SIMPRE: hay que cerrar los pipes antes salir del programa. Es algo similar a liberar memoria dinámica.">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 8:">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "			  //Matar a un Proceso: Utilizamos Mandato exit(1): esta es la única manera de poner un proceso en estado Terminado (muerto)">> ./$1.c
+echo "">> ./$1.c
+echo "			  //			Recordar siempre: \"Todo buen padre espera por sus hijos\". Esta frase es importante tenerla en cuanta para" >> ./$1.c
+echo "">> ./$1.c
+echo "			  //					   que ningún hijo se quede en esta 'Zombie' \<defunct\>, es decir, si un padre muere antes que su hijo, el hijo se queda en estado 'Zombie'.">> ./$1.c
+echo "">> ./$1.c
+echo "			  //Diferencias entre: wait(1), waitpid(2), pause(3) y sleep(1) ">> ./$1.c
+echo "">> ./$1.c
+echo "			  //	- wait(1): wait(NULL) pone en estado de pausa el proceso que la llama hasta que uno (cualquiera) de sus procesos hijos muere">> ./$1.c
+echo "">> ./$1.c
+echo "			  //	- waitpid(2): pone en estado de pausa el proceso que la llama hasta que EL (uno en concreto) proceso hijo muere">> ./$1.c
+echo "">> ./$1.c
+echo "			  //	- pause(3): no recibe ningún Argumento de entrada y el Proceso que llama se queda en estado de pausa hasta que recibe una señal">> ./$1.c
+echo "">> ./$1.c
+echo "			  //	- sleep(1): recibe cómo Argumento de entrada el tiempo que el Proceso debe quedarse en estado de pausa.">> ./$1.c
+echo "">> ./$1.c
+echo "			//Estructura básica para saber en que proceso estamos">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "				pipe(fd_tuberia_del_padre_al_hijo);">> ./$1.c
+echo "				pipe(fd_tuberia_del_hijo_al_padre);">> ./$1.c
+echo "				pid1_fork=fork();">> ./$1.c
+echo "">> ./$1.c
+echo "				if(pid_fork<0){ // ERROR AL HACER EL fork()">> ./$1.c
+echo "					printf(\"Error: al hacer el fork()\");">> ./$1.c
+echo "				}else if(pid_fork==0){// ESTAMOS EN EL HIJO">> ./$1.c
+echo "					signal(SIGUSR1,manejador_hijo);">> ./$1.c
+echo "					signal(SIGUSR2,manejador_hijo);">> ./$1.c
+echo "					close(fd_tuberia_del_padre_al_hijo[1]);// A través de este Pipe con flujo de datos Padre---->>Hijo el hijo solo lee, no escribe. Cierro fd_tph[1].">> ./$1.c
+echo "					close(fd_tuberia_del_hijo_al_padre[0]);// A través de este Pipe con flujo de datos Padre<<----Hijo el hijo solo escribe, no lee. Cierro fd_thp[1].">> ./$1.c
+echo "				}else if (pid_fork>=0){ // ESTAMOS EN EL PADRE">> ./$1.c
+echo "					signal(SIGUSR2,manejador_padre);">> ./$1.c
+echo "					close(fd_tuberia_del_padre_al_hijo[0]);// A través de este Pipe con flujo de datos Padre---->>Hijo el padre solo escribe, no lee. Cierro fd_tph[0].">> ./$1.c
+echo "					close(fd_tuberia_del_hijo_al_padre[1]);// A través de este Pipe con flujo de datos Padre<<----Hijo el padre solo lee, no escribe. Cierro fd_thp[0].">> ./$1.c
+echo "				}">> ./$1.c
+echo "">> ./$1.c
 echo "//---------------------------------" >> ./$1.c
 echo "}// FIN FUNCIÓN MAIN" >> ./$1.c
 echo "//---------------------------------" >> ./$1.c
 echo "// IMPLEMENTACIONES FUNCIONES CUYAS CABECERAS ESTAN DEFINIDAS AL PRINCIPIO DE ESTE DOCUMENTO Y QUE SON UTILIZADAS DENTRO DE MAIN">> ./$1.c
-echo "	//IMPORTANTE: 	   No debemos devolver directamente el apuntador *buf, ya que *buf">> ./$1.c
-echo "	// 		   es una variable Local. Haciendo strdup() lo que hacemos es crear una copia">> ./$1.c
-echo "	// 		   de lo que hay donde apunta *buf, es decir, se crea una nueva zona de memoria,">> ./$1.c
-echo "	// 		   y devolvemos la copia. Este problema surge porque C puede trabajar a muy bajo">> ./$1.c
-echo "	// 		   nivel y esto es bueno para algunas cosas pero muy peligrosas para otras, este es">> ./$1.c
-echo "	// 		   un claro ejemplo del cuidado que hay que tener. En otros lenguajes de más alto nivel">> ./$1.c
-echo "	// 		   esta copia que aquí hacemos con strdup() se hace de forma interna si necesidad de">> ./$1.c
-echo "	// 		   explicitarlo en el código que redacta el programador.">> ./$1.c
 echo "">> ./$1.c
 echo "">> ./$1.c
 echo "	//IMPLEMENTACION FUNCION 1">> ./$1.c
@@ -268,6 +429,66 @@ echo "			//return;(si tipo_out =void) ó return algo del mismo tipo_out; (nota: 
 echo "		//}">> ./$1.c
 echo "	//FIN IMPLEMENTACION FUNCION 2">> ./$1.c
 echo "	//---------------------------------">> ./$1.c
+echo "	//IMPLEMENTACION FUNCION 3">> ./$1.c
+echo "		void manejador_padre(int signal){">> ./$1.c
+echo "			//Señal SIGINT: Ctrl +C">> ./$1.c
+echo "			//Señal SIGUSR1: Para uso del Programador">> ./$1.c
+echo "			//Señal SIGUSR2: Para uso del Programador">> ./$1.c
+echo "			printf(\"Padre: Recibida señal. %d\n\", signal);">> ./$1.c
+echo "			if(signal == SIGINT){">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "			}else if(signal ==SIGUSR1){">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "			}else if(signal ==SIGUSR2){">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "			}">> ./$1.c
+echo "			return;">> ./$1.c
+echo "		}">> ./$1.c
+echo "	//FIN IMPLEMENTACION FUNCION 3">> ./$1.c
+echo "	//---------------------------------">> ./$1.c
+echo "	//IMPLEMENTACION FUNCION 4">> ./$1.c
+echo "		void manejador_hijo_1(int signal){">> ./$1.c
+echo "			//Señal SIGINT: Ctrl +C">> ./$1.c
+echo "			//Señal SIGUSR1: Para uso del Programador">> ./$1.c
+echo "			//Señal SIGUSR2: Para uso del Programador">> ./$1.c
+echo "			printf(\"Hijo_1: Recibida señal. %d\n\", signal);">> ./$1.c
+echo "			if(signal == SIGINT){">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "			}else if(signal ==SIGUSR1){">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "			}else if(signal ==SIGUSR2){">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "			}">> ./$1.c
+echo "			return;">> ./$1.c
+echo "		}">> ./$1.c
+echo "	//FIN IMPLEMENTACION FUNCION 4">> ./$1.c
+echo "	//---------------------------------">> ./$1.c
+echo "	//IMPLEMENTACION FUNCION 5">> ./$1.c
+echo "		void manejador_hijo_2(int signal){">> ./$1.c
+echo "			//Señal SIGINT: Ctrl +C">> ./$1.c
+echo "			//Señal SIGUSR1: Para uso del Programador">> ./$1.c
+echo "			//Señal SIGUSR2: Para uso del Programador">> ./$1.c
+echo "			printf(\"Hijo_2: Recibida señal. %d\n\", signal);">> ./$1.c
+echo "			if(signal == SIGINT){">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "			}else if(signal ==SIGUSR1){">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "			}else if(signal ==SIGUSR2){">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "			}">> ./$1.c
+echo "			return;">> ./$1.c
+echo "		}">> ./$1.c
+echo "	//FIN IMPLEMENTACION FUNCION 5">> ./$1.c
+echo "	//---------------------------------">> ./$1.c
 echo "	//IMPLEMENTACION FUNCION N">> ./$1.c
 echo "		//tipo_out nombreFuncionN(tipo_in Arg1_in, Arg2_in,..., Argn_in){">> ./$1.c
 echo "			//...">> ./$1.c
@@ -276,5 +497,5 @@ echo "		//}">> ./$1.c
 echo "	//FIN IMPLEMENTACION FUNCION N">> ./$1.c
 echo "">> ./$1.c
 echo "">> ./$1.c
-echo "// FIN IMPLEMENTACIONES FUNCIONES CUYAS CABAECERAS ESTAN DEFINIDAS AL PRINCIPIO DE ESTE DOCUMENTO UTILIZADAS DENTRO DE MAIN
+echo "// FIN IMPLEMENTACIONES FUNCIONES CUYAS CABECERAS ESTAN DEFINIDAS AL PRINCIPIO DE ESTE DOCUMENTO UTILIZADAS DENTRO DE MAIN
 ">> ./$1.c

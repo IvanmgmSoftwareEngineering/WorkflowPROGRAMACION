@@ -1,0 +1,100 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2576
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica-Bold;\f1\fswiss\fcharset0 Helvetica;\f2\fswiss\fcharset0 ArialMT;
+\f3\fmodern\fcharset0 CourierNewPS-BoldMT;\f4\fmodern\fcharset0 CourierNewPSMT;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red127\green0\blue85;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\csgenericrgb\c49804\c0\c33333;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww37720\viewh16280\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\qc\partightenfactor0
+
+\f0\b\fs48 \cf0 \ul \ulc0 INSTRUCCIONES ECLIPSE\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f1\b0 \cf0 \ulnone Paso 1) Crear Proyecto C desde Eclipse: File > New > Project\'85 > C project >  Next  > \
+			> \'93Nombre_Proyecto\'94 > Next > Next > Finish\
+			(Instalar el compilador gcc: sudo apt install gcc y sudo set install build-esential (Para que los proyectos traigan los includes de las librer\'edas b\'e1sicas))\
+\
+Paso 2) Desde directorio \'93eclipse-workspace\'94 ejecutamos en la Shell \'93./mycp Nombre_Proyecto\'94\
+\
+Paso 3) Situamos el Directorio actual de trabajo en Directorio Nombre_Proyecto: cp Nombre_Proyecto\
+\
+Paso 4) Creamos Fichero .c con M\'e9todo Main: ./nc Nombre_Fichero_main (sin .c)\
+\
+Paso 5) Creamos Fichero .h con Libreria        : ./nh libreria (sin .h)\
+\
+Paso 6) Compilamos desde Eclipse: presionamos bot\'f3n \'93Build all\'94\
+\
+Paso 7) Configuramos para poder Ejecutar: Run > Run Configurations\'85 > \
+			> seleccionamos C/C++ Application (columna izquierda) > \
+			> New launch configuration (columna izquierda) >\
+			> (parte derecha) C/C++ Application: pulsamos bot\'f3n \'93Browse\'94 >\
+			> navegamos hasta la carpeta del proyecto > Directorio Debug > \
+			> Seleccionamos el \'fanico Ejecutable que hay con el mismo nombre del Proyecto >\
+			> Pulsamos bot\'f3n \'93Open\'94 > Pulsamos bot\'f3n \'93Apply\'94 > Pulsamos bot\'f3n \'93Close\'94\
+\
+Paso 8) Ejecutar programa: 2 opciones\
+\
+	- 	opci\'f3n 1\'97> Desde Eclipse: (Play) esta opci\'f3n NO permita el paso de Argumentos de entrada al M\'e9todo Main\
+\
+	- 	opci\'f3n 2\'97> Desde Shell: esta opci\'f3n SI permita el paso de Argumentos de entrada al M\'e9todo Main\
+						   Paso a) Situamos el Directorio de trabajo PWD en el Directorio Debug que hay dentro del Directorio del Proyecto\
+						   Paso b) Ejecutamos: ./Nombre_Proyecto Arg1 Arg2 \'85 Argn\
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+Paso 9) Enlazar librer\'edas externas .h y .a . HAY QUE UTILIZAR STATIC\
+	Paso 9.1)\'bfDesde donde trabajar?\
+		OPCI\'d3N 1: Desde eclipse instalado en el SO de MAC no me deja\
+					  	Debo instalar una Maquina Virtual Virtual Box (con nueva Actualizaci\'f3n Big Sur no me deja)\
+					  	Intalar un SO Linux (Ej: ElementaryIO)\
+					  	Instalar Eclipse C/C++ en ElementaryIO\
+					  		-Seguir los siguientes pasos: (mirar \'93Manual para instalar Eclipse en Linux\'94)\
+		OPCI\'d3N 2: Haciendo uso de myapps\
+							nota 1: para compartir Ficheros desde el SO MAC al SO virtualidade de myapps debo seguir los siguientes pasos:\
+								    		Paso 1) Acceder a trav\'e9s de un navegador desde el SO mac al portal de Servicios\
+										Paso 2) En la columna de la derecha pulso al enlace 
+\fs36 \cf2 \'93
+\f2 \expnd0\expndtw0\kerning0
+Acceso remoto a los recursos electr\'f3nicos de la biblioteca\'94\
+										
+\f1\fs48 \cf0 \kerning1\expnd0\expndtw0 Paso 3)  Pulso el enlace a \'93Acceso a MyApps URJC\'94 y me logo con mis credenciales \
+										Paso 4)  En la Pesta\'f1a \'93my R:\'94 tengo acceso al mismo \'e1rbol de Directorios que est\'e1 en el SO virtualizado accesible desde \'93Este equipo\'94\
+		OPCI\'d3N 3: Utilizar la herramienta \'93Boot Camp\'94 que ofrece MAC para instalar un segundo sistema operativo en una partici\'f3n del disco duro\
+					  	\
+		OPCI\'d3N 4: Hacer una partici\'f3n del disco duro mediante \'93Disk Utility\'94. Reiniciar el ordenador e inmediatamente pulsar la tecla \'91alt\'92 para entrar en el Gestor de Arranque. Hay que crear un disco de arranque en la memoria USB con la herramienta \'93balenaEtcher\'94\
+\
+		OPCI\'d3N 5: Utilizar Maquina virtual con VM Ware Fusion (Compatible con Big Sur)\
+\
+\
+\
+	Paso 9.2)Una vez creado el Proyecto en Eclipse desde el SO virtualizado (Opci\'f3n 1 \'f3 Opci\'f3n 2). Sigo los siguientes pasos para enlazar la Libreria .a y .h externa con mi proyecto.\
+				Paso 1) Copio dentro del Proyecto de Eclipse los Ficheros .a y .h de las Librer\'edas que quiero enlazar\
+				Paso 2) Bot\'f3n derecho sobre el Proyecto > Properties\
+				Paso 3) Bot\'f3n derecho sobre el Proyecto > Properties\
+				Paso 4) Selecciono en la columna de la izquierda C/C++ 
+\f0\b General
+\f1\b0  > \'93Paths and Symbols\'94 > Pesta\'f1a \'93Libraries\'94 \'93Add\'85\'94 y a\'f1ado el nombre del fichero .a (sin lib previo y sin .a al final) en nuestro caso al estar trabajando en un sistema de 64 bits debemos poner \'93parser_64\'94.\
+				Paso 5) Selecciono en la columna de la izquierda C/C++ 
+\f0\b General
+\f1\b0  > \'93Paths and Symbols\'94 > Pesta\'f1a \'93Library Paths\'94 \'93Add\'85\'94 y a\'f1ado la ruta del Directorio donde est\'e1 contenido el Fichero .h.\
+				Paso 6) Selecciono en la columna de la izquierda C/C++ 
+\f0\b Build
+\f1\b0 > \'93Settings\'94. Aqu\'ed hay que hacer varias cosas:\
+					Paso 6.1) A\'f1adimos el -include: \'93Cross GCC 
+\f0\b Compiler
+\f1\b0 \'94 > \'93Includes\'94 > A\'f1adimos el Directorio donde esta contenido el Fichero .h (-l) y a\'f1adimos la ruta del Directorio .h (-include)\
+					Paso 6.2) A\'f1adimos el -flag -static: \'93Cross GCC 
+\f0\b Linker
+\f1\b0 \'94 > \'93Miscellaneous\'94 > Ponemos a mano en \'93Linker flags\'94 -static\
+				Paso 7) A\'f1ado a fichero .h 
+\f3\b\fs20 \cf3 #ifndef
+\f4\b0 \cf0  _PARSER_H 
+\f3\b \cf3 #define
+\f4\b0 \cf0  _PARSER_H\'85\'85 #endif. 
+\fs48 La raz\'f3n de que no este esta relacionada con el Fichero makefile que se autogenera y que nos facilita el trabajo para utilizar los mandatos de gcc. El objetivo del fichero makefile es que una vez generado no deberemos introducir multitud de mandatos para compilar y ejecutar nuestro programa cada vez que lo queramos lanzar. El \'93truco\'94 de poner 
+\f3\b\fs20 \cf3 #ifndef
+\f4\b0 \cf0  _PARSER_H 
+\f3\b \cf3 #define
+\f4\b0 \cf0  _PARSER_H\'85\'85 #endif 
+\fs48 hace que todo funcione, pero seg\'fan me dijo el profesor no se debe hacer. Creo que es debido a que ellos quieren que hagamos un fichero makefile propio.
+\f1 \
+	}

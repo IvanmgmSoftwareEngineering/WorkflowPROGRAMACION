@@ -1,0 +1,3 @@
+INICIAR REPOSITORIO: ./ir url_repositorio_remoto_GitHub
+
+ACTUALIZAR REPOSITORIO: ./ar comentario_commit

@@ -31,11 +31,12 @@ touch ./$1.txt
 chmod 700 ./$1.txt
 echo "#!/bin/bash" >> ./$1.txt
 echo "#--------------------------------------------------------------------------------------" >> ./$1.txt
-echo "# Nombre del Script:" >> ./$1.txt
-echo "# Autor:" >> ./$1.txt
-echo "# Fecha:" >> ./$1.txt
+echo "# Nombre del Script: $1" >> ./$1.txt
+echo "# Autor: Iván Martín Gómez" >> ./$1.txt
+fecha=`date`
+echo "# Fecha: $fecha" >> ./$1.txt
 echo "" >> ./$1.txt
-echo "#		  Argumentos entrada: [] para indicar que son opcionales" >> ./$1.txt
+echo "#		Argumentos entrada: [] para indicar que son opcionales" >> ./$1.txt
 echo "			#Argumento 1: " >> ./$1.txt
 echo "			#Argumento 2:   " >> ./$1.txt
 echo "			#Argumento n:   " >> ./$1.txt
@@ -46,9 +47,8 @@ echo "" >> ./$1.txt
 echo "#		Descripción:" >> ./$1.txt
 echo "" >> ./$1.txt
 echo "#---------------------------------------------------------------------------------------" >> ./$1.txt
-echo "" >> ./$1.txt
-echo "#---------------------------------------------------------------------------------------" >> ./$1.txt
 echo "# Control de Argumentos de Entrada" >> ./$1.txt
+echo "" >> ./$1.txt
 echo "if test \$# -eq 0	# No hay Argumentos" >> ./$1.txt
 echo "then" >> ./$1.txt
 echo "	#Opción 1: Mostramos error">> ./$1.txt
@@ -87,7 +87,7 @@ echo "		#exit 4">> ./$1.txt
 echo "	#fi">> ./$1.txt
 echo "">> ./$1.txt
 echo "	#Si llegamos hasta aquí todo ha ido bien">> ./$1.txt
-echo "	#directorio=$1">> ./$1.txt
+echo "	#directorio=">> ./$1.txt
 echo "">> ./$1.txt
 echo "fi">> ./$1.txt
 echo "">> ./$1.txt
