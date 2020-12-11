@@ -1,9 +1,9 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2513
+{\rtf1\ansi\ansicpg1252\cocoartf2576
 \cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica-Bold;\f1\fswiss\fcharset0 Helvetica;\f2\fswiss\fcharset0 Helvetica-Oblique;
 \f3\fswiss\fcharset0 Helvetica-BoldOblique;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww45060\viewh11620\viewkind0
+{\colortbl;\red255\green255\blue255;\red231\green62\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c93328\c38659\c100000;\cssrgb\c0\c0\c0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww45060\viewh17720\viewkind0
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\qc\partightenfactor0
 
 \f0\b\fs48 \cf0 \ul \ulc0 WORKFLOW FUNDAMENTOS WEB\
@@ -13,8 +13,7 @@ HTML, CSS Y JAVASCRIPT
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 \cf0 \
 \ul COMENTARIO de l\'ednea y bloque HTML\ulnone :   <!- - \'93comentario\'94 - ->\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
-\cf0 \ul \ulc0 COMENTARIO de l\'ednea  CSS\ulnone : 	                 /* \'93comentario\'94 */\
+\ul COMENTARIO de l\'ednea  CSS\ulnone : 	                 /* \'93comentario\'94 */\
 \ul COMENTARIO de l\'ednea  JAVASCRIPT\ulnone :     // \'93comentario\'94  y de bloque /* comentario */\
 \
 \ul CREAR PLANTILLA FICHERO .html\ulnone : (
@@ -47,8 +46,149 @@ HTML, CSS Y JAVASCRIPT
 \f0\b ../
 \f1\b0 hace referencia al Directorio padre)\
 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\qc\partightenfactor0
+\cf0 \ul -> CONCEPTOS PREVIOS NECESARIOS <-\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\qc\partightenfactor0
+\cf0 \ulnone \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
-\cf0 \
+
+\f0\b \cf0 \ul ONTOLOG\'cdA:
+\f1\b0 \ulnone  Lenguaje utilizado por las m\'e1quinas para comunicarse\
+\
+
+\f0\b \ul IDIOMA
+\f1\b0 \ulnone : Lenguaje utilizado por los humanos para comunicarse
+\f0\b \ul \
+\
+W3C
+\f1\b0 \ulnone : (World Wide Web Consortium)\
+	-\ul Nota1\ulnone : DAWG (RDF Data Access Working Group). Es un grupo que trabaja dentro del W3C.\
+\
+
+\f0\b \ul XML
+\f1\b0 \ulnone : (Extensible Markup Language). Es un Lenguaje de Marcado de documentos, que define un conjunto de reglas para la codificaci\'f3n de documentos.\
+	-\ul Nota1\ulnone : XMLschema. \
+	-\ul Nota2: \ulnone  XML es complejo para ser entendido por los humanos\ul \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \ulnone \
+
+\f0\b RDF
+\f1\b0 : (Resource Description Framework). Es una familia de especificaciones de la W3C originalmente dise\'f1ado como modelo de datos para metadatos. RDF esta codificado en XML.\
+	-\ul Nota3:\ulnone  Red Sem\'e1ntica: Representamos \'93Conocimiento\'94 mediante un Grafo.\
+	-\ul Nota4:\ulnone  La representaci\'f3n de un Grafo usando RDF la hacemos mediante un Conjunto de \'93Arcos\'94, donde un Arco es una \'93Tripleta\'94; Arco=(NodoOrigen, Predicado, NodoDestino).\
+	-\ul Nota5\ulnone : En RDF esta Tripleta se traduce en:\
+			- NodoOrigen: Un IRI (de un recurso) o \'93blanc node\'94 (en ausencia de IRI)\
+			- Predicado: IRI (de una relaci\'f3n binaria) (\'bfLa IRI del predicado representa un Objeto Abstracto?)\
+			- NodoDestino: Un IRI (de un recurso) o \'93blanc node\'94 (en ausencia de IRI)\
+	-\ul Nota6:\ulnone  Hay varias formas de \'93Representar\'94 (Serializar) un RDF.\
+			- Formato de Representaci\'f3n 1: XML (muy complejo para ser entendido por los humanos)\
+			- Formato de Representaci\'f3n 2: Turtle (trutle se encarga de definir o indicar donde est\'e1n los IRIs de los objetos abstractos de los predicados)\
+				-\'bfQue es un IRI? IRI (=International Resource Identifier) Un \'93
+\f0\b \cf2 Recurso
+\f1\b0 \cf0 \'94 en la web se representan mediante un IRI\
+	-\ul Nota7:\ulnone  Objetivo: representar \'93
+\f0\b \cf2 Recursos
+\f1\b0 \cf0 \'94 en la red:\
+			- Recurso 1: Documentos\
+			- Recurso 2: Personas\
+			- Recurso 3: Sitios Web (URL\'92s)\
+			- Recurso 4: Objetos F\'edsicos (hardware) o  Objetos Abstractos\
+	-\ul Nota8:\ulnone  RDF Schema: hace uso de XML Schema datatypes. Dado que RDF tiene limitaciones para limitar lo que puede recibir como entrada la Relaci\'f3n Binaria que hay en el Predico, que a su vez est\'e1 en el Arco y que as\'ed vez est\'e1 en el Grafo. RDF Schema define:\
+		 	- Restricciones de Dominio y Rango\
+			- Fija Sem\'e1ntica de subclases (limitamos el nombre que le podemos dar al Predicado)\
+			- Jerarquia de Clases y Predicados.\
+	-\ul Nota9:\ulnone  RDF Schema ya tiene una equivalencia con la L\'f3gica de Descripciones (ALC = Tbox(Terminological KB(Knowledge Box)) + ABox(Assertional KB(Knowledge Box)) )\
+\ul 	\ulnone -\ul Nota10:\ulnone  RDF Schema tambi\'e9n introduce la posibilidad de dar \'93sem\'e1ntica\'94 a una IRI, mediante \'93comment\'94.\
+\ul 	\ulnone -\ul Nota11:\ulnone  RDF Schema tambi\'e9n introduce la posibilidad de dar una \'93versi\'f3n legible\'94 (para las personas) de una IRI, mediante \'93label\'94.\
+	\ul \
+	\ulnone -\ul Nota12:\ulnone  RDF en un \ul \ulc3 modelo\ulnone  \'fatil para representar un \ul Vocabulario\ulnone , pero 
+\f0\b No
+\f1\b0  es \'fatil para representar Conocimiento, es decir, un \ul Lenguaje\ulnone .\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \ul 	\ulnone -\ul Nota13:\ulnone  RDF Schema es un \ul modelo\ulnone  que 
+\f0\b Si
+\f1\b0  es \'fatil para representar Conocimiento, es decir, un Lenguaje.\
+\
+\
+
+\f0\b \ul OWL
+\f1\b0 \ulnone : (Ontologies Web Languaje). Es un Lenguaje de Ontolog\'edas Web para ser utilizado en aplicaciones que necesiten procesar el contenido de la informaci\'f3n, en lugar de \'fanicamente representar la informaci\'f3n para los humanos. Proporciona un mejor mecanismo de interpretabilidad de contenido web en comparaci\'f3n con los mecanismos proporcionados por XML y RDF Schema de forma individual. OWL tiene c\'f3mo objetivo facilitar un modelo de marcado construido sobre RDF Schema y codificado en XML.\
+	-\ul Nota1\ulnone : OWL a\'f1ade funcionalidades adicionales a RDF Schema:\
+			- Funcionalidad 1: A\'f1ade primitivas (IRI\'92s) para aumentar la Expresividad de RDF Schema\
+			- Funcionalidad 2: OWL resuelve las limitaciones de RDF Schema: a\'f1ade los conceptos de las L\'f3gicas de Descripciones (\'93Para todo\'94, \'93Existe\'94,\'85).\
+	-\ul Nota2\ulnone : OWL si se puede representar si una propiedad es transitiva, mientras que en RDF Schema no se puede representar si una propiedad es transitiva\ul \ulc0 \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\b \cf0 SPARQ
+\f1\b0 \ulnone : (Protocol and RDF Query Language \'bfy la S del principio?). Es un Lenguaje estandarizado para la consulta de Grafos RFD ==> Grafos RFD Schema ==> Grafos OWL\
+	-\ul Nota1\ulnone : Al igual que sucede con SQL, es necesario distinguir entre \'93Lenguaje de consulta\'94 y el \'93motor para el almacenamiento y recuperaci\'f3n de datos\'94\
+	-\ul Nota2\ulnone : Existen numerosas implementaciones de SPARQL, generalmente ligados a entornos de desarrollo y plataformas tecnol\'f3gicas.\
+	-\ul Nota3\ulnone : En principio SPARQL \'fanicamente incorpora funciones para la recuperaci\'f3n de sentencias RDF.\
+	-\ul Nota4\ulnone : Hay sitios web que han hecho Grafos RDF de otros sitios web (Ej: dbpedia es el Grafo RDF de Wikipedia)\
+	-\ul Nota5\ulnone : Para hacer consultas SPARQL en dbpedia utilizamos browser Firefox en el \'91endpoint\'92 dbpedia.org/snorql (m\'e1s amigable) \'f3 en dbpedia.org/sparql\
+	-\ul Nota6\ulnone : Un nodo en RDF en un Sujeto o un Objeto\
+	-\ul Nota7\ulnone : Una Tripla en RDF en un Sujeto, un Arco y un Objeto\
+\
+
+\f0\b \ul PROTEGE
+\f1\b0 \ulnone : Editor de Ontolog\'edas que nace en la Universidad de Stanford en colaboraci\'f3n con la Universidad de M\'e1nchester (https://protege.stanford.edu)\
+	-\ul Nota1\ulnone : La aplicaci\'f3n est\'e1 escrita en \'93
+\f2\i Java
+\f1\i0 \'94 y usa fuertemente \'93
+\f2\i Swing
+\f1\i0 \'94 para crear su compleja interfaz. (Comentario Sergio: con Swing puedes hacer uso de Interfaces sin necesidad de implementarlas)\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+
+\f0\b \ul HTML:
+\f1\b0 \ulnone  (Hypertext Markup Language). Es un Lenguaje de Marcado de documentos predefinido(ya est\'e1 definido), utilizado para la construcci\'f3n de p\'e1ginas web. \
+	-\ul Nota1\ulnone : HTML es un subconjunto de XML\
+	-\ul Nota2:\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \ulnone \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\b \cf0 \ul CSS:
+\f1\b0 \ulnone  (Cascade Style Sheets)\ul \
+	-Nota1\ulnone : Bootstrap: plantilla b\'e1sica de css. Se apoya sobre JQuery\
+	-\ul Nota2\ulnone :\
+\
+\
+
+\f0\b \ul JAVASCRIPT:
+\f1\b0 \ulnone \
+	-\ul Nota\ulnone 1: No es lo mismo pasar una funci\'f3n como argumento a otra funci\'f3n que hacer una llamada a una funci\'f3n. En JavaScript es posible pasar funciones como argumento a otra funci\'f3n.\
+	-\ul Nota2\ulnone : 
+\f0\b JSON
+\f1\b0  (Java Script Object Notation), es una forma de definir un Objeto en JavaScritp. Recordar que hay dos formas de definir objetos en JavaScritp.\
+	-\ul Nota3\ulnone : 
+\f0\b DOM
+\f1\b0  (Document Object Model) Cuando un Navegador carga un .html, el .html se pasea (tokeniza) para crear su \'c1rbol DOM. El nodo ra\'edz de este \'c1rbol DOM se lama \'91document\'92 y utilizando funciones JavaScritp podemos recorrer, modificar, crear, eliminar elementos del \'c1rbol DOM. S\'ed est\'e1 estandarizado.\
+	-\ul Nota4\ulnone : 
+\f0\b BOM
+\f1\b0  (Browser Object Model). Mediante el BOM es posible redimensionar y mover la ventana, modificar el texto que se muestra en la barra de estados y muchas cosas m\'e1s NO relacionadas con el .html. No est\'e1 estandarizado.\
+	-\ul Nota5\ulnone : 
+\f0\b JSAPI
+\f1\b0  (Java Script API) Es la API escrita en JavaScript de propiedades y funciones que permite acceder al DOM y al BOM\
+	-\ul Nota6\ulnone : 
+\f0\b JQUERY
+\f1\b0  (Java \'85) Extiende a JSAPI con animaciones, soporte  para CSS, eventos y AJAX.\
+	-\ul Nota7\ulnone : 
+\f0\b AJAX
+\f1\b0  (Asynchronous JavaScript + XML) no es una tecnolog\'eda por s\'ed misma, es un t\'e9rmino que describe un nuevo modo de utilizar conjuntamente varias tecnolog\'edas existentes. Esto incluye: HTML \'f3 XHTML, CSS, JavaScript, DOM, XML, XSLT, y lo m\'e1s importante, el objeto 
+\f2\i \ul XMLHttpRequest
+\f1\i0 \ulnone . Cuando esta tecnolog\'edas se combinan en un modelo AJAX, es posible lograr aplicaciones web capaces de actualizarse continuamente sin tener que volver a cargar la p\'e1gina completa. Esto crea aplicaciones m\'e1s r\'e1pidas y con mejor respuesta a la acciones del usuario.\
+	-\ul Nota8\ulnone :\
+\
+\
+-> FIN CONCEPTOS PREVIOS NECESARIOS <-\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\
+\
 (Nota previa: Documentos \'93Instrucciones Eclipse HTML.pdf\'94 y \'93Plantilla b\'e1sica Bootstrap.html\'94)\
 \
 - Utilizar Eclipse Java desde el \'91vWorkspace\'92\

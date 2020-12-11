@@ -66,9 +66,11 @@ echo "//LIBRERÍAS ESTANDAR DE C (entre < >). YA PREDEFINIDAS EN EL SISTEMA. El 
 echo "#include <stdio.h>" >> ./$1.c
 echo "#include <stdlib.h>" >> ./$1.c
 echo "#include <string.h>" >> ./$1.c
-echo "#include <unistd.h> // para Llamada al Sistema fork()" >> ./$1.c
-echo "#include <signal.h> // para Llamada al Sistema signal()" >> ./$1.c
-echo "#include <ctype.h>  // para Función de Biblioteca toupper(); pasa un char de lower case to upper case" >> ./$1.c
+echo "#include <unistd.h>// para Llamada al Sistema fork()" >> ./$1.c
+echo "#include <signal.h>// para Llamada al Sistema signal()" >> ./$1.c
+echo "#include <ctype.h>// para Función de Biblioteca toupper(); pasa un char de lower case to upper case" >> ./$1.c
+echo "#include <pthread.h>// Para el uso de Threads(Hebras) y MUTEX(Semáforos Binarios). Para utilizar la API Pthread útil para la Creación y Sincronización de Hebras. Para Compilar haciendo uso de la Librería ptherad.h se debe incluir \"-lpthread\" en la compilación (Ej: gcc fila.c -pthread -o programa)" >> ./$1.c
+echo "#include <semaphore.h>// Para el uso de Semáforos">> ./$1.c
 echo >> ./$1.c
 echo "//LIBRERÍAS PROPIAS (entre \" \")" >> ./$1.c
 echo "//#include \"lireria.h\"" >> ./$1.c
@@ -76,7 +78,10 @@ echo "//Cuando queremos agregar una Librería con extension .a utilizar manual "
 echo >> ./$1.c
 echo >> ./$1.c
 echo "//ALGUNAS SECCIONES DEL MANUAL QUE ES CONVENIENTE SABER:">> ./$1.c
-echo "//Sección (1)Mandatos, Sección (2)Llamadas al Sistema, Sección (3)Funciones de Biblioteca">> ./$1.c
+echo "// Para consultar el Manual hacer: man ">> ./$1.c
+echo "//  	Sección (1)Mandatos,">> ./$1.c
+echo "//	Sección (2)Llamadas al Sistema,">> ./$1.c
+echo "//	Sección (3)Funciones de Biblioteca">> ./$1.c
 echo >> ./$1.c
 echo >> ./$1.c
 echo "// CABECERAS FUNCIONES UTILIZADAS DENTRO DE MAIN">> ./$1.c
@@ -100,6 +105,10 @@ echo "	// CABECERA FUNCION 5: Manejo señales Procesos">> ./$1.c
 echo "		//void manejador_hijo_2(int signal);">> ./$1.c
 echo "	// FIN CABECERA FUNCION 5">> ./$1.c
 echo "	//---------------------------------">> ./$1.c
+echo "	// CABECERA FUNCION 6: Manejo Hebra">> ./$1.c
+echo "		//void hebra1(tipo_in1 Arg1_in, tipo_in2 Arg2_in, ..., tipo_inn Argn_in);">> ./$1.c
+echo "	// FIN CABECERA FUNCION 5">> ./$1.c
+echo "	//---------------------------------">> ./$1.c
 echo "	// CABECERA FUNCION N">> ./$1.c
 echo "		//tipo_out nombreFuncionN(tipo_in1 Arg1_in, tipo_in2 Arg2_in,..., tipo_inn Argn_in);
 ">> ./$1.c
@@ -107,7 +116,18 @@ echo "	// FIN CABECERA FUNCION N">> ./$1.c
 echo "// FIN CABECERAS FUNCIONES UTILIZADAS DENTRO DE MAIN">> ./$1.c
 echo "//---------------------------------">> ./$1.c
 echo >> ./$1.c
-echo "// EMPIEZA FUNCION MAIN" >> ./$1.c
+echo "// ZONA DECLARACION VARIABLE GLOBALES (fuera de la función main())" >> ./$1.c
+echo "	 //nota: La función main() aún siendo una función especial por ser la función de entrada y de salida del programa,">> ./$1.c
+echo "         //	 es una función más, por lo que las variables declaradas dentro de la función main() serán variables  ">> ./$1.c
+echo "	 // 	 locales a la función main(), es decir, no serán accesibles desde funciones externas a la función main().">> ./$1.c
+echo "	 // 	 Si queremos tener acceso a una variable desde cualquier función, debemos declararla aquí." >> ./$1.c
+echo "	 //	 Este comentario es útil para:">> ./$1.c
+echo "	 //		- Funciones manejadoras de señales; utilizan pid_fork">> ./$1.c
+echo "	 //	 	- Funciones que devuelven una variable de tipo apuntador; se debe hacer copia antes de hacer return">> ./$1.c
+echo >> ./$1.c
+echo >> ./$1.c
+echo >> ./$1.c
+echo "pid_t *vector_PIDs; // Variable de tipo vector, Global para almacenar lo que devuelven las Llamadas al Sistema fork(2). Esto nos permitirá conocer los PIDs entre Procesos que son Hermanos. Se pone aquí fuera porque esta variable para que pueda ser consultada desde las funciones manejadoras() de señales que están fuera del main()">> ./$1.c
 echo "pid_t pid1_fork; // Variable global para tratar lo que devuelve la Llamada al Sistema fork(2). Se pone aquí fuera porque esta variable para que pueda ser consultada desde las funciones manejadoras() de señales que están fuera del main()">> ./$1.c
 echo "pid_t pid2_fork; // Variable global para tratar lo que devuelve la Llamada al Sistema fork(2). Se pone aquí fuera porque esta variable para que pueda ser consultada desde las funciones manejadoras() de señales que están fuera del main()">> ./$1.c
 echo "pid_t pid3_fork; // Variable global para tratar lo que devuelve la Llamada al Sistema fork(2). Se pone aquí fuera porque esta variable para que pueda ser consultada desde las funciones manejadoras() de señales que están fuera del main()">> ./$1.c
@@ -116,28 +136,83 @@ echo "int fd_tuberia_del_padre_al_hijo[2]; // GLOBAL PORQUE SE GESTIONA EN funci
 ">> ./$1.c
 echo "int fd_tuberia_del_hijo_al_padre[2]; // GLOBAL PORQUE SE GESTIONA EN función fuera del main() (manejadora de señales)
 ">> ./$1.c
+echo "sem_t semaforo;// Variable de tipo Semáforo declarada de forma Global para que puede ser vista desde funciones externas que utiliza la hebra para su ejecución. Típicamente esta función externa que ejecuta la hebra llama a las funciones sem_wait(&semaforo) y sem_post(&semaforo) de la librería semaphore.h">> ./$1.c
+echo "pthread_mutex_t mutex; // Variable de tipo MUTEX(Mutual Exclusion)=SEMÁFORO BINARIO">> ./$1.c
+echo "pthread_cond_t cond_mutex; //Variable de tipo CONDICIÓN de un MUTEX">> ./$1.c
+
 echo >> ./$1.c
+echo "// FIN ZONA DECLARACION VARIABLE GLOBALES" >> ./$1.c
+echo "//---------------------------------">> ./$1.c
+echo "// EMPIEZA FUNCION MAIN" >> ./$1.c
 echo "int main (int argc, char *argv[], char *envp[]){" >> ./$1.c
 echo >> ./$1.c
 echo "	//Notas :">> ./$1.c
 echo "	//	Nota 1: **argv=*argv[]=argv[][]">> ./$1.c
 echo "	// 	Nota 2: true=1, false =0">> ./$1.c
 echo "	//	Nota 3: NULL es una constante. var=NULL ==> if(!var) ==>0">> ./$1.c
-echo "	//  	Nota 4: Violaciones de Segmento típicas: Tipo 1: intentar acceder a un Apuntador que esta apuntando a NULL">> ./$1.c
+echo "	//  	Nota 4: Violaciones de Segmento típicas: una Violación de Segmento se produce cuando intentamos acceder a una zona de memoria a la que no tenemos derecho ">> ./$1.c
+
+echo "	//						 Tipo 1: intentar acceder a un Apuntador que esta apuntando a NULL">> ./$1.c
 echo "	//						 Tipo 2: intentar indexar un vector o array en una posición que no existe">> ./$1.c
+echo "	//  	Nota 5: Toda variable se deben DECLARAR y INICIALIZAR">> ./$1.c
+echo "	//		Destacamos la Declaración e Inicialización de las variables de tipo Apuntador (el uso de los Apuntadores es una de las característica más relevantes que distingue al Lenguaje de Programación C de otros Lenguajes de Programación de más alto nivel">> ./$1.c
+
+echo "	//				Declaración: (char *linea ó char linea[]) (Vector) ó (char **lista_lineas ó char lista_lineas[][]) (Matriz) ">> ./$1.c
+echo "	//				             (int *numeros ó int numeros[]) (Vector) ó (int **lista_numeros ó int lista_numeros[][]) (Matriz)">> ./$1.c
+echo "  //			        Inicialización: (3 posibles formas):">> ./$1.c
+echo "	//					- FORMA 1: de forma explícita. linea =['a' 'b' 'c' 'd'] ">> ./$1.c
+echo "	//					- FORMA 2: Asignación Memoria Estática. char *linea [1024]. Esta forma de hacerlo implica hacer la Inicialización en la misma línea que la Declaración ">> ./$1.c
+echo "	//					- FORMA 3: Asignación Memoria Estática. Mediante uso de malloc(3)">> ./$1.c						
+echo "	//					  (nota): Cuando asignamos Memoria, ya sea de forma Estática o de forma Dinámica, estamos Inicializando la variable de tipo apuntador, esto se debe que en ese momento la variable apuntador empieza apuntar a una zona de memoria, hasta el momento de la Inicialización, la variable de tipo Apuntador no apuntaba a ninguna parte.">> ./$1.c
 echo >> ./$1.c
-echo "		printf(\"EMPIEZA EL PROGRAMA\n\");" >> ./$1.c
+echo "	//	Nota 6: No confundir Reserva de Memoria Dinámica con Reserva de Memoria Estática.">> ./$1.c
 echo >> ./$1.c
-echo "// ZONA DE DECLARACION DE VARIABLES GLOBALES" >> ./$1.c
+echo "	//		--> Reserva de Memoria ESTÁTICA: se utiliza cuando SI conocemos el tamaño de memoria que vamos a reservar en tiempo de COMPILACIÓN">> ./$1.c
+echo "     //						Ejemplo: *char[argc] No es una asignación de Memoria Estática ya que el valor de argh no lo conocemos en tiempo de Compilación. Aunque C permita hacerlo esto está mal.">> ./$1.c
+echo "	//		--> Reserva de Memoria DINÁMICA: se utiliza cuando NO conocemos el tamaño de memoria que vamos a reservar en tiempo de COMPILACIÓN, pero SI lo conocemos en tiempo de EJECUCIÓN">> ./$1.c
+echo >> ./$1.c
+echo >> ./$1.c
+echo >> ./$1.c
+echo "	//	Nota 7: Generador de números aleatorios">> ./$1.c
+echo "					-Números Aleatorios Enteros">> ./$1.c
+echo "	//					srand (time(NULL)); // Va cambiando la semilla que utiliza la función rand(3) para generar el número aleatorio (la hora del sistema es diferente cada vez que ejecutemos el programa), si no hiciésemos esto la función rand(3) siempre devolvería los mismo números aleatorio en distintas ejecuciones, ya que utiliza siempre la misma semilla. srand(3) sólo será necesario llamarlo una vez en nuestro programa.">> ./$1.c
+echo "	//					num_aleatorio_entero= rand() % (N+1); // Genera un numero aleatorio entero entre 0 y N">> ./$1.c
+echo "	//					num_aleatorio_entero = (rand() % (N-M+1)) + M; // Genera un numero aleatorio entero entre M y N">> ./$1.c
+echo "					-Números Aleatorios con Decimales(no funciona bien, el operador %(módulo) no funciona con decimales">> ./$1.c
+echo "	//					srand48 (time(NULL)); // Va cambiando la semilla que utiliza la función drand48(3) para generar el número aleatorio (la hora del sistema es diferente cada vez que ejecutemos el programa), si no hiciésemos esto la función drand48(3) siempre devolvería los mismo números aleatorio en distintas ejecuciones, ya que utiliza siempre la misma semilla. srand48(3) sólo será necesario llamarlo una vez en nuestro programa.">> ./$1.c
+echo "	//					num_aleatorio_con_decimales = (drand48() % (N-M)) + M; // Genera un numero aleatorio con decimales entre M y N">> ./$1.c
+echo >> ./$1.c
+echo "	//	Nota 8:">> ./$1.c
+echo >> ./$1.c
+echo "		printf(\"------------------------------------------------------\n\");" >> ./$1.c
+echo "printf(\"EMPIEZA EL PROGRAMA\n\");" >> ./$1.c
+echo >> ./$1.c
+echo "// ZONA DE DECLARACION DE VARIABLES LOCALES FUNCIÓN MAIN()" >> ./$1.c
+echo "		static int variable_statica = 0; // Imprescindible hacer la Inicialización en la misma línea que la para que la">> ./$1.c
+
+echo "						 // variable se comporte como 'estática', si hacemos la Inicialización después de la Declaración,">> ./$1.c
+echo "						 // entonces la variable se comportará como una variable que no es de tipo estática.">> ./$1.c
+echo "						 // Esto se debe a que al hacerlo todo en una misma línea la Inicialización sólo se realiza una vez,">> ./$1.c
+echo "						 // el resto de veces que volvamos a pasar por la mismo zona del código,">> ./$1.c
+echo "						 // no se tendrá en cuenta la Inicialización. Las variables de ">> ./$1.c
+echo "						 // tipo 'estáticas' tienen la característica que conservan su valor, es decir,">> ./$1.c
+echo "						 // si la variable está Declarada e Inicializada dentro de una función la que llamamos en repetidas ocasiones,">> ./$1.c
+echo "						 // la variable 'estática conservará su último valor. ">> ./$1.c
+echo "						 // Si esto mismo lo hiciésemos con una variable 'no estática', ">> ./$1.c
+echo "						 // entonces la Inicialización se tendría en cuenta cada vez que llamamos a la función,">> ./$1.c
+echo "						 // por lo que perderíamos el último valor.">> ./$1.c
+
+
+
 echo "		int i;" >> ./$1.c
-echo "		char buf[1024];">> ./$1.c
-echo "		char **lineasTexto;">> ./$1.c
+echo "		char buf[1024]; // Esta variable de tipo apuntador está Declarada e Inicializada Mediante la Técnica de Reserva de Memoria Estática.">> ./$1.c
+echo "		char **lineasTexto;// Esta variable de tipo apuntador sólo esta Declarada, pero no está Inicializada">> ./$1.c
 echo "		char lista[100]; // Si quiero un array donde almacenar char's, debo inicializar así lista para después poder indexarla">> ./$1.c
 echo "		pid_t pid_fork;// Lo que devuelve la Llamada al Sistema fork() no es un int (aunque lo parezca), si no una variable de tipo pid_t. Lo que tiene de especial la variable de tipo pid_t, es que la variable pid_t cambia su valor dependiendo de cuál sea el Proceso desde el que la estamos consultando">> ./$1.c 
+echo "		pthread_t TID;// Thread Identifier único de la Hebra">> ./$1.c
 echo >> ./$1.c
 echo >> ./$1.c
-echo >> ./$1.c
-echo "// FIN ZONA DE DECLARACION DE VARIABLES GLOBALES" >> ./$1.c
+echo "// FIN ZONA DE DECLARACION DE VARIABLES LOCALES FUNCIÓN MAIN()" >> ./$1.c
 echo "//------------------------------------" >> ./$1.c
 echo "// ZONA DE PARSEO (Parsear Mandato = Tokenizar Mandato)
 " >> ./$1.c
@@ -167,7 +242,7 @@ echo "//					       Argumento de entrada a la función strtok().">> ./$1.c
 echo >> ./$1.c
 echo >> ./$1.c
 echo >> ./$1.c
-
+echo "		printf(\"------------------------------------------------------\n\");" >> ./$1.c
 echo "		printf(\"Tokenizamos el Mandato:\n\");" >> ./$1.c
 echo "		printf(\"--> Se han recibido %i Argumento/s:\n\",argc-1);" >> ./$1.c
 echo "		for ( i=0; i<argc;i=i+1){" >> ./$1.c
@@ -183,15 +258,15 @@ echo "// FIN ZONA DE PARSEO" >> ./$1.c
 echo "//----------------------------------" >> ./$1.c
 echo "// ZONA DE CONTROL ERRORES ARGUMENTOS" >> ./$1.c
 echo "		if(argc==1){ //Hemos recibido 0 Argumentos:" >> ./$1.c
-echo "			/*printf(\"usage: nombre_programa Argumento1 [Argumento2] ... [Argumento_n-1 [Argumento_n]]\");" >> ./$1.c
+echo "			/*printf(\"usage: %s Argumento1 [Argumento2] ... [Argumento_n-1 [Argumento_n]]\\n\",argv[0]);" >> ./$1.c
 echo "			return 1;*/" >> ./$1.c
 echo "		}" >> ./$1.c
 echo "		if(argc==2){ //Hemos recibido 1 Argumento:" >> ./$1.c
-echo "			/*printf(\"Error nombre_programa: explicación error: %s\n\",argv[1]);" >> ./$1.c
+echo "			/*printf(\"Error %s: explicación error: %s\n\",argv[0],argv[1]);" >> ./$1.c
 echo "			return 2;	*/" >> ./$1.c
 echo "		}" >> ./$1.c
 echo "		if(argc==3){//Hemos recibido 2 Argumentos:" >> ./$1.c
-echo "			/*printf(\"Error nombre_programa: explicación error: %s\n\",argv[1]);" >> ./$1.c
+echo "			/*printf(\"Error %s: explicación error: %s\n\",argv[0],argv[1]);" >> ./$1.c
 echo "			return 3;	*/" >> ./$1.c
 echo "		}" >> ./$1.c
 echo "		if(argc > 3){//Hemos recibido más de 3 Argumentos:" >> ./$1.c
@@ -202,8 +277,8 @@ echo "// FIN DE CONTROL ERRORES ARGUMENTOS" >> ./$1.c
 echo "//---------------------------------" >> ./$1.c
 echo "// EMPIEZA FUNCIONALIDAD PROGRAMA" >> ./$1.c
 echo "">> ./$1.c
-echo "		//Reserva Memoria Dinámica">> ./$1.c
-echo "		lineasTexto = (char**)malloc(1024* N); //N es un dato que recibimos como Argumento en *argv[]. 1024 coincide con el tamaño de la variable 'buf'">> ./$1.c
+echo "		//Reserva Memoria Dinámica = Inicializamos la variable de tipo apuntador mediante la Técnica de Reserva Memoria Dinámica">> ./$1.c
+echo "		lineasTexto = (char**)malloc(N*sizeof(char*)); //N es un dato que recibimos como Argumento en *argv[].">> ./$1.c
 echo "		//Control Errores Reserva Memoria Dinámica">> ./$1.c
 echo "		if (lineasTexto == NULL) {">> ./$1.c
 echo "			fprintf(stderr, \"Error reservando memoria dinámica con malloc()\n\");">> ./$1.c
@@ -211,7 +286,7 @@ echo "			return -3;">> ./$1.c
 echo "		}">> ./$1.c
 echo "		//Reserva Memoria Dinámica">> ./$1.c
 echo "		while(i<N){">> ./$1.c
-echo "			lineasTexto[i] = (char*)malloc(1024);">> ./$1.c
+echo "			lineasTexto[i] = (char*)malloc(1024*sizeof(char));//Reserva de Memoria Dinámica para las columnas de cada una de las filas. 1024 coincide con el tamaño de la variable 'buf'. Notar que también podemos hacer una reserva más eficiente haciendo uso de strlen(argv[i]) para i desde 1 hasta argc-1">> ./$1.c
 echo "			//Control Errores Reserva Memoria Dinámica">> ./$1.c
 echo "			if (lineasTexto == NULL) {">> ./$1.c
 echo "				fprintf(stderr, \"Error reservando memoria dinámica con malloc()\n\");">> ./$1.c
@@ -244,74 +319,75 @@ echo "">> ./$1.c
 echo "			//CONCEPTOS PREVIOS:">> ./$1.c
 echo "">> ./$1.c
 echo "">> ./$1.c
-echo "			  //Creación de nuevos Procesos con la Llamada al Sistema fork(2)">> ./$1.c
+echo "//------------>Creación de nuevos Procesos con la Llamada al Sistema fork(2)">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 1: Cuando hacemos un fork() se crea un Proceso Hijo (Copia exacta del código del Padre)">> ./$1.c
+echo "				//nota 1): Cuando hacemos un fork() se crea un Proceso Hijo (Copia exacta del código del Padre)">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 2: No confundir lo que devuelve la Llamada al Sistema fork() con el pid (Proccess Identifier -Único- para cada proceso) de un ">> ./$1.c
+echo "				//nota 2): No confundir lo que devuelve la Llamada al Sistema fork() con el pid (Proccess Identifier -Único- para cada proceso) de un ">> ./$1.c
 echo "				//	  Proceso, aunque típicamente se tiende a llamar a la variable de tipo pid_t, que devuelve el fork(), 'pid', NO ES LO MISMO,">> ./$1.c
 echo "				//	  el pid único para cada Proceso se consulta utilizando la Llamada al Sistema getpid().  Por todo lo dicho anteriormente, ">> ./$1.c
 echo "				//        no llamo a lo que devuelve la Llamada al Sistema fork() 'pid', si no que lo llamo 'pid_fork'">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 3: ">> ./$1.c
+echo "				//nota 3): ">> ./$1.c
 echo "">> ./$1.c
 echo "">> ./$1.c
-echo "			  //Recepción y manejo de señales con Función de Biblioteca signal(3)">> ./$1.c
+echo "//------------>Recepción y manejo de señales con Función de Biblioteca signal(3)">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 1: La Función de Biblioteca signal(3) se llama desde el código del Proceso que recibe la señal.">> ./$1.c
+echo "				//nota 1): La Función de Biblioteca signal(3) se llama desde el código del Proceso que recibe la señal.">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 2: Tiene un sintaxis 'fea': Ejemplo: signal(SIGINT,manejador). La función manejador recibe como Argumento de entrada un 'int' pero aquí ">> ./$1.c
+echo "				//nota 2): Tiene un sintaxis 'fea': Ejemplo: signal(SIGINT,manejador). La función manejador recibe como Argumento de entrada un 'int' pero aquí ">> ./$1.c
 echo "				//	  no se especifica. Lo que esta pasando internamente es que la Función de Biblioteca signal(3) le está pasando">> ./$1.c
 echo "				//	  como Argumento la señal SIGINT (que es un entero) a la función, implementada por nosotros, void manejador(int signal)">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 3: Hay dos formas de gestionar las señales:">> ./$1.c
+echo "				//nota 3): Hay dos formas de gestionar las señales:">> ./$1.c
 echo "">> ./$1.c
-echo "				//	  Forma 1: Tenemos una única función 'manejador()' que se encarga de gestionar las señales recibidas en el Padre y en el hijo">> ./$1.c
+echo "				//	  -Forma 1: Tenemos una única función 'manejador()' que se encarga de gestionar las señales recibidas en el Padre y en el hijo">> ./$1.c
 echo "				//	  	   -Esta forma de hacerlo implica tener un código en la Función manejador() que nos permita saber si estamos en el Padre o en el Hijo">> ./$1.c
 echo "				//	  	   -Esta forma de hacerlo implica también que signal deberá hacerse desde una zona del código compartida por padre e hijo">> ./$1.c
 echo "">> ./$1.c
-echo "				//	  Forma 2:(ESTA ES LA MEJOR FORMA) Tenemos dos funciones manejadoras: manejador_padre() y manejador_hijo()">> ./$1.c
+echo "				//	  -Forma 2:(ESTA ES LA MEJOR FORMA) Tenemos dos funciones manejadoras: manejador_padre() y manejador_hijo()">> ./$1.c
 echo "				//	  	   que se encarga de gestionar las señales recibidas en el Padre y en el hijo">> ./$1.c
 echo "				//	  	   -Esta forma de hacerlo implica que habrá dos signal: uno para escuchar las señales que recibe el Padre y">> ./$1.c
 echo "				//	   	    otro signal para escuchar las señales que recibe el Hijo">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 4: Algunas señales útiles ">> ./$1.c
-echo "				// Señal SIGINT: Ctrl +C">> ./$1.c
-echo "				// Señal SIGUSR1: Para uso del Programador">> ./$1.c
-echo "				// Señal SIGUSR2: Para uso del Programador">> ./$1.c
+echo "				//nota 4): Algunas señales útiles ">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 6: Ctrl+D no es una señal. Esta secuencia de teclas es utilizada para informar de final de fichero. Ejemplo: si estamos leyendo líneas por teclado en la Entrada Estándar mediante la Función de Biblioteca fgets(3) y queremos que fgets devuelva NULL, pulsando ctrl+d lo conseguimos. ">> ./$1.c
+echo "				// 	-Señal SIGINT: Ctrl +C">> ./$1.c
+echo "				// 	-Señal SIGUSR1: Para uso del Programador">> ./$1.c
+echo "				// 	-Señal SIGUSR2: Para uso del Programador">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 7: Hay dos 'Macros' útiles para la gestión de señales:  ">> ./$1.c
+echo "				//nota 5): Ctrl+D no es una señal. Esta secuencia de teclas es utilizada para informar de final de fichero. Ejemplo: si estamos leyendo líneas por teclado en la Entrada Estándar mediante la Función de Biblioteca fgets(3) y queremos que fgets devuelva NULL, pulsando ctrl+d lo conseguimos. ">> ./$1.c
+echo "">> ./$1.c
+echo "				//nota 6): Hay dos 'Macros' útiles para la gestión de señales:  ">> ./$1.c
 echo "">> ./$1.c
 echo "				//	  WIFEXITED (status): distinto de cero si el hijo ha terminado">> ./$1.c
 echo "">> ./$1.c
 echo "				//	  WESISTATUS (status): nos permite conocer el valor que ha devuelto el hijo mediante el exit(1). Sólo se puede consultar si WIFEXITED es distinta de cero, es decir, si el hijo ha terminado">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 8: ">> ./$1.c
+echo "				//nota 7): ">> ./$1.c
 
 echo "">> ./$1.c
-echo "				//nota 9: Variable stderr, con un número de error asociado errno y la Función de Biblioteca strerror(3) para gestionar: errores de Mandatos, Llamadas al Sistema y Funciones de biblioteca ">> ./$1.c
+echo "				//nota 8): Variable stderr, con un número de error asociado errno y la Función de Biblioteca strerror(3) para gestionar: errores de Mandatos, Llamadas al Sistema y Funciones de biblioteca ">> ./$1.c
 
 echo "">> ./$1.c
-echo "			  //Envío de señales con Mandato Kill(1)">> ./$1.c
+echo "//------------>Envío de señales con Mandato Kill(1)">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 1: No hay que malinterpretar la palabra 'Kill'. Este mandato NO se utiliza para matar un Proceso, se utiliza para enviar una señal desde un Proceso ">> ./$1.c
-echo "				//nota 2: El mandato kill(1) se ejecutará desde el código del Proceso que desea enviar la señal. ">> ./$1.c
+echo "				//nota 1): No hay que malinterpretar la palabra 'Kill'. Este mandato NO se utiliza para matar un Proceso, se utiliza para enviar una señal desde un Proceso ">> ./$1.c
+echo "				//nota 2): El mandato kill(1) se ejecutará desde el código del Proceso que desea enviar la señal. ">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 3: Será útil la Llamada al Sistema getppid(2) para conseguir el pid único del Proceso Padre">> ./$1.c
+echo "				//nota 3): Será útil la Llamada al Sistema getppid(2) para conseguir el pid único del Proceso Padre">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 4: ">> ./$1.c
+echo "				//nota 4): ">> ./$1.c
 echo "">> ./$1.c
-echo "			  //Creación y uso de Tuberías con Comando de Administración de Sistema pipe(8)">> ./$1.c
+echo "//------------>Creación y uso de Tuberías con Comando de Administración de Sistema pipe(8)">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 1: int fd[2]. Este array de 2 enteros se le pasará cómo argumento a pipe()">> ./$1.c
+echo "				//nota 1): int fd[2]. Este array de 2 enteros se le pasará cómo argumento a pipe()">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 2: La comunicación de una Tubería (una llamada a pipe()) es unidireccional, es decir, si queremos una comunicación bidireccional, entonces se necesitan dos Tuberías (dos llamadas a pipe())">> ./$1.c
+echo "				//nota 2): La comunicación de una Tubería (una llamada a pipe()) es unidireccional, es decir, si queremos una comunicación bidireccional, entonces se necesitan dos Tuberías (dos llamadas a pipe())">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 3: TODOS LOS PIPES SE CREAN ANTES DEL fork().">> ./$1.c
+echo "				//nota 3): TODOS LOS PIPES SE CREAN ANTES DEL fork().">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 4: CUIDADO AHORA!! ESTE CONCEPTO ES ESCURRIDIZO:">> ./$1.c
+echo "				//nota 4): CUIDADO AHORA!! ESTE CONCEPTO ES ESCURRIDIZO:">> ./$1.c
 echo "				//	  CONCEPTO DE HERENCIA DE PIPES: un pipe creado antes del fork() por un padre, es heredado por su hijo. Entonces, cuando utilizamos fd[0] y fd[1], debemos tener cuidado desde que proceso lo estamos haciendo.">> ./$1.c
 echo "">> ./$1.c
 echo "				//	  TUBERÍA 1: envío de datos desde el proceso PADRE --> HIJO">> ./$1.c
@@ -338,28 +414,28 @@ echo "				//	  	fd_tuberia_hijo_padre[0]; El Hijo sólo Envía (escribe), el hij
 echo "">> ./$1.c
 echo "				//	  	fd_tuberia_hijo_padre[1]; El Padre sólo Recibe (lee), el padre no Envía (no escribe) ==> estando en el padre hacemos close (fd_tuberia_hijo_padre[1])">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 5: Las Tuberías se pueden gestionar de dos formas: ">> ./$1.c
+echo "				//nota 5): Las Tuberías se pueden gestionar de dos formas: ">> ./$1.c
 echo "">> ./$1.c
-echo "				//	- Forma 1: Mediante el Uso de Descriptores de Fichero ">> ./$1.c
-echo "				//		   Utilizaremos Llamadas al sistema (2) cómo: write(), read() y close()">> ./$1.c
+echo "//				- Forma 1: Mediante el Uso de Descriptores de Fichero ">> ./$1.c
+echo "//					   Utilizaremos Llamadas al sistema (2) cómo: write(), read() y close()">> ./$1.c
 echo "">> ./$1.c
-echo "				//	- Forma 2: Mediante el Uso de File * ">> ./$1.c
-echo "				//		   Utilizaremos Funciones de Biblioteca (3) cómo: fopen(), fputs(), fgets() y fclose()">> ./$1.c
+echo "//				- Forma 2: Mediante el Uso de File * ">> ./$1.c
+echo "//					   Utilizaremos Funciones de Biblioteca (3) cómo: fopen(), fputs(), fgets() y fclose()">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 6: La lectura del pipe SI es bloqueante. La escritura del pipe NO es bloquearte">> ./$1.c
+echo "//			nota 6): La lectura del pipe SI es bloqueante. La escritura del pipe NO es bloquearte">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 7: RECORDAR QUE SIMPRE: hay que cerrar los pipes antes salir del programa. Es algo similar a liberar memoria dinámica.">> ./$1.c
+echo "//			nota 7): RECORDAR QUE SIMPRE: hay que cerrar los pipes antes salir del programa. Es algo similar a liberar memoria dinámica.">> ./$1.c
 echo "">> ./$1.c
-echo "				//nota 8:">> ./$1.c
+echo "//			nota 8):">> ./$1.c
 echo "">> ./$1.c
 echo "">> ./$1.c
-echo "			  //Matar a un Proceso: Utilizamos Mandato exit(1): esta es la única manera de poner un proceso en estado Terminado (muerto)">> ./$1.c
+echo "//------------>Matar a un Proceso: Utilizamos Mandato exit(1): esta es la única manera de poner un proceso en estado Terminado (muerto)">> ./$1.c
 echo "">> ./$1.c
 echo "			  //			Recordar siempre: \"Todo buen padre espera por sus hijos\". Esta frase es importante tenerla en cuanta para" >> ./$1.c
 echo "">> ./$1.c
 echo "			  //					   que ningún hijo se quede en esta 'Zombie' \<defunct\>, es decir, si un padre muere antes que su hijo, el hijo se queda en estado 'Zombie'.">> ./$1.c
 echo "">> ./$1.c
-echo "			  //Diferencias entre: wait(1), waitpid(2), pause(3) y sleep(1) ">> ./$1.c
+echo "//------------>Diferencias entre: wait(1), waitpid(2), pause(3) y sleep(1) ">> ./$1.c
 echo "">> ./$1.c
 echo "			  //	- wait(1): wait(NULL) pone en estado de pausa el proceso que la llama hasta que uno (cualquiera) de sus procesos hijos muere">> ./$1.c
 echo "">> ./$1.c
@@ -369,7 +445,61 @@ echo "			  //	- pause(3): no recibe ningún Argumento de entrada y el Proceso qu
 echo "">> ./$1.c
 echo "			  //	- sleep(1): recibe cómo Argumento de entrada el tiempo que el Proceso debe quedarse en estado de pausa.">> ./$1.c
 echo "">> ./$1.c
-echo "			//Estructura básica para saber en que proceso estamos">> ./$1.c
+echo "">> ./$1.c
+
+echo "//------------>Ejecución de mandatos mediante execvp(3)">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "//				nota 0): Cuidado aquí entre el concepto de Tubería que creamos mediante pipe(2) para que dos Procesos se comuniquen y el concepto de pipe '|' que utilizamos para redireccionar la Salida Estándar de un Mandato a la Entrada Estándar de otro mandato.">> ./$1.c
+echo "//				nota 1): Siempre que hagamos uso de execvp(3), deberemos crear un Proceso Hijo, y será el Hijo quien haga uso de execvp(3)">> ./$1.c
+echo "//				nota 2): Para comunicar al Proceso Padre y al Proceso Hijo haremos uso de Tuberias (pipe(2))">> ./$1.c
+echo "">> ./$1.c
+echo "//				nota 3): La función de Biblioteca execvp(3), sólo admite UN ÚNICO mandato (junto con sus argumentos) en sus Argumentos. No admite redirecciones ni pipes">> ./$1.c
+echo "//				nota 4): Diferenciar entre Redirecciones '>' ó '<' y Pipe '|'">> ./$1.c
+echo "//					(nota: las redireción de salida tiene la siguiente sintaxis mandato>fichero)">> ./$1.c
+echo "//					(nota: las redireción de entrada tiene la siguiente sintaxis fichero<mandato)">> ./$1.c
+echo "//					(nota: los pipes tienen la siguiente sintaxis mandato1|mandato2|...|mandaton)">> ./$1.c
+echo "//					(nota: Con los pies hay que tener cuidado de que mandatos ponemos en cada posición (Concepto de mandatos de tipo Filtro, concepto de que un mandato reciba información a través de Argumentos o a través de la Entrada Estándar.)">> ./$1.c
+echo "//					(nota: Mezcla Redirecciones y pipes: fichero_in < mandato1|mandato2|...|mandaton > fichero_out) En este caso, únicamente la Entrada Estándar del primer mandato que aparece en la cadena de pipes será redirigida a fichero_in, de igual forma, únicamente la Salida Estándar del último mandato que aparece en la cadena de pipes será redirigida a fichero_out ">> ./$1.c
+
+
+echo "//					-Redirecciones:">> ./$1.c
+echo "//							Redireccion de la Entrada Estándar: fichero 0< mandato == fichero < mandato. Por defecto, si no especificamos ninguna redirección de entrada, el mandato tiene asociada la Entrada Estándar con el fichero stdin (TECLADO)  ">> ./$1.c
+echo "">> ./$1.c
+echo "//							Redireccion de la Salida Estándar: mandato 1> fichero == fichero > mandato. Por defecto, si no especificamos ninguna redirección de salida, el mandato tiene asociada la Salida Estándar con el fichero stdout (PANTALLA)  ">> ./$1.c
+echo "">> ./$1.c
+echo "	//						Redireccion de la Salida Estándar Error: mandato 2> fichero. Por defecto, si no especificamos ninguna redirección de salida, el mandato tiene asociada la Salida Estándar Error con el fichero stdout (PANTALLA)  ">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "//				nota 5): Cuando dentro de un proceso Hijo hacemos un execvp(3), lo que se hace es sustituir el código del Hijo por el Código del mandato que le hemos pasado como argumento a execvp(3). En caso de todo ir bien y no producirse ningún error en la ejecución del mandato que hemos pasado cómo argumento a execvp(3), se hará un exit(0) lo que hará que el Hijo muera. En caso de que algo haya ido mal en el execvp(3), se almacenará en la variable 'errno' el código de error y se seguirá con la siguiente línea de código que el Hijo tenga a continuación de execvp(3). ">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "//				nota 6): Por la nota1) Concluimos que execvp(3) deber recibir el mandato LIMPIO (mandato + argumentos, nada más, ni redirecciones ni pipes)">> ./$1.c
+echo "//				nota 7): Por la nota 4), si queremos ejecutar una línea que contenga Redirecciones debemos:">> ./$1.c
+echo "//						-Paso 1: Limpiar la línea y quedarnos sólo con el mandato y con sus argumentos Limpios ">> ./$1.c
+echo "//						-Paso 2: Antes de hacer execvp(3) debemos hacer la redirección utilizando dup(2) ó dup2(2)">> ./$1.c
+echo "//						(nota: dup() hace una copia del Descriptor de fichero que recibe como argumento y a la copia le asigna el número de Descriptor de Fichero más bajo disponible.">> ./$1.c
+echo "//						(nota: dup2()=close(1)+dup() hace una copia del Descriptor de fichero que recibe como argumento y a la copia le asigna el número de Descriptor de Fichero que le hemos indicado como Argumento.)">> ./$1.c
+echo "//						(nota: Por qué dup2()=close(1)+dup()? Porque haciendo close(1) dejamos libre el número de Descriptor de fichero 1 y a continuación dup() cómo toma el primer número de Descriptor de Fichero más bajo disponible, sabemos que tomará el 1)">> ./$1.c
+
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "//				nota 8): Por la nota 4), si queremos ejecutar una línea que contenga varios mandatos unidos por pipes '|' (mandato1|mandato2|mandato3|...) debemos:">> ./$1.c
+echo "//						-Paso 1: Parsear la línea: y quedarnos con cada mandato (junto con sus argumentos) de forma individual">> ./$1.c
+echo "//						-Paso 2: Crear Tuberías desde el Padre a cada uno de sus hijos para enviarle un único mandato (junto con sus argumentos)">> ./$1.c
+echo "//						-Paso 3: Creamos tantos Procesos Hijos como mandatos tenga la línea (número de mandatos= número de apariciones símbolo '|' -1). Notar que debemos hacer los fork() de forma controlada para que siempre se hagan en el padre y así asegurarnos que todos los Hijos son Hermanos entre sí.">> ./$1.c
+
+
+echo "//						-Paso 4: Para hacer posible la Transferencia de información entre los hermanos, notar que los hermanos deben conocer los números únicos de PID's de sus otros hermanos, para esto nos ayudamos de pid_t *vector_PIDs definido de forma GLOBAL">> ./$1.c
+echo "//						-Paso 5: Debemos crear Tuberías para que los hermanos puedan transferirse información entre ellos.">> ./$1.c
+echo "//						-Paso 6: Haciendo uso de dup() o dup2(). Cada Hijo deberá, antes de utilizar execvp(3), redirigir la Salida Estándar hacia el pipe de escritura ">> ./$1.c
+echo "//						-Paso 7: Haciendo uso de dup() o dup2(). ¿Cada Hijo deberá, antes de utilizar execvp(3), redirigir la Entrada Estándar hacia el pipe de lectura? ">> ./$1.c
+echo "//						-Paso 8: Haciendo uso de dup() o dup2(). Cada Hijo deberá, antes de utilizar execvp(3), redirigir la Salida Estándar Error hacia el pipe de escritura ">> ./$1.c
+
+echo "//						-Paso 9: Cada hermano ejecutará un único mandato (junto con sus argumentos) haciendo uso de execvp(3)">> ./$1.c
+
+echo "">> ./$1.c
+echo "//------------>Estructura básica para saber en que proceso estamos">> ./$1.c
 echo "">> ./$1.c
 echo "">> ./$1.c
 echo "				pipe(fd_tuberia_del_padre_al_hijo);">> ./$1.c
@@ -383,11 +513,123 @@ echo "					signal(SIGUSR1,manejador_hijo);">> ./$1.c
 echo "					signal(SIGUSR2,manejador_hijo);">> ./$1.c
 echo "					close(fd_tuberia_del_padre_al_hijo[1]);// A través de este Pipe con flujo de datos Padre---->>Hijo el hijo solo lee, no escribe. Cierro fd_tph[1].">> ./$1.c
 echo "					close(fd_tuberia_del_hijo_al_padre[0]);// A través de este Pipe con flujo de datos Padre<<----Hijo el hijo solo escribe, no lee. Cierro fd_thp[1].">> ./$1.c
-echo "				}else if (pid_fork>=0){ // ESTAMOS EN EL PADRE">> ./$1.c
+echo "					pause();//Sale del pause cuando se recibe alguna señal">> ./$1.c
+echo "					exit(0)">> ./$1.c
+echo "">> ./$1.c
+echo "				}else if (pid_fork>0){ // ESTAMOS EN EL PADRE">> ./$1.c
 echo "					signal(SIGUSR2,manejador_padre);">> ./$1.c
 echo "					close(fd_tuberia_del_padre_al_hijo[0]);// A través de este Pipe con flujo de datos Padre---->>Hijo el padre solo escribe, no lee. Cierro fd_tph[0].">> ./$1.c
 echo "					close(fd_tuberia_del_hijo_al_padre[1]);// A través de este Pipe con flujo de datos Padre<<----Hijo el padre solo lee, no escribe. Cierro fd_thp[0].">> ./$1.c
+echo "					kill(pid_fork,SIGUSR1);//Enviamos señal al hijo para que despierte">> ./$1.c
+echo "					waitpid(pid_fork,&status,0);">> ./$1.c
+echo "					if(WIFEXITED(status) != 0){//La Macro WIFEXITED de \"sintaxis fea\" séra distinta de cero si el Hijo ha terminado">> ./$1.c
+echo "						if(WEXITSTATUS(status) != 0){//La Macro WEXITSTATUS de \"sintaxis fea\" sólo será accesible si el Hijo ha terminado, es decir, si la Macro WIFEXITED es distinta de cero ">> ./$1.c
+echo "							exit_status= WEXITSTATUS(status);">> ./$1.c
+echo "							printf("El Hijo1 no terminó de forma correcta\n");">> ./$1.c
+echo "						}">> ./$1.c
+echo "					}">> ./$1.c
+echo "					exit(0)//Matamos al Padre">> ./$1.c
 echo "				}">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "		//ZONA DE HEBRAS (\"THREADS\"=\"PROCESOS LIGEROS\")">> ./$1.c
+echo "			// -Identificador Único de una Hebra: pthread_t TID (Thread Identifier)">> ./$1.c
+echo "			// -Creación de Hebras:		      pthread_create (pthread_t *tid, pthread_attr_t *attr, void *funcion, void *param)">> ./$1.c
+echo "			// 	-pthread_t *tid == Identificador Único de la Hebra. Hay que usar '&'.">> ./$1.c
+echo "			// 	-pthread_attr_t **attr == NULL">> ./$1.c
+echo "			// 	-void *funcion == Función que se llamará y será el código que ejecute la hebra. Está Función deberá ser implementada fuera de la función main">> ./$1.c
+echo "			// 	-void *param == Argumentos que recibe la función anterior">> ./$1.c
+echo "			// -Sincronización de Hebras:	      pthread_join (pthread_t tid, int **res); La Hebra que llama a esta función, espera a que finalice la hebra llamada (indicada en el primer argumento de esta función), antes de continuar">> ./$1.c
+echo "			// 	-pthread_t tid == Identificador Único de la Hebra">> ./$1.c
+echo "			// 	-int **res == devuelve el valor de retorno ¿de la función que se ejecuta en la hebra llamada?">> ./$1.c
+echo "			// -Finalización de una Hebra: 	      pthread_exit(void *res). Toda Hebra debe finalizar su ejecución con esta función.">> ./$1.c
+echo "			// 	-void *res = ¿¿Por qué aquí es apuntador simple y en join es apuntador doble??">> ./$1.c
+echo "			// -COMENTARIOS SINCRONIZACIÓN:">> ./$1.c
+echo "			// 	(Ejemplo: Productor- Consumidor)">> ./$1.c
+echo "			// 	- CONDICIÓN DE CARRERA: Cuando varios procesos (dos o más) acceden a los mismos datos de forma concurrente y el resultado de la ejecución depende del orden concreto en que se realizasen los accesos, se dice que hay una Condición de Carrera.">> ./$1.c
+echo "			// -SECCIÓN CRÍTICA: Cada hebra tiene una zona de código llamada Sección Crítica donde se accede a variables y recursos compartidos. Cuando una Hebra está ejecutando su Sección Crítica, ninguna otra Hebra puede ejecutar su correspondiente Sección Crítica. El problema de la Sección Crítica consiste en diseñar un Protocolo que permita cooperar. Cualquier diseño del Protocolo para solucionar el Problema de la Sección Crítica debe cumplir:">> ./$1.c
+echo "			// 	-EXCLUSIÓN MUTUA: Si una Hebra está ejecutando su Sección Crítica, ninguna otra Hebra puede ejecutar su correspondiente Sección Critica">> ./$1.c
+echo "			// 	-PROGRESO: Si ninguna Hebra está ejecutando su Sección Crítica, y hay varias Hebras que quieren entrar en su Sección Crítica (están esperando), sólo las Hebras que están en su sección restante (no están esperando para entrar en su Sección Crítica), piden participar en la decisión de quién entra en la Sección Crítica, y esta decisión no puede posponerse indefinidamente.">> ./$1.c
+echo "			// 	-ESPERA LIMITADA: Existe un límite de veces que se permite a otras Hebras entrar en la Sección Crítica después de que otra Hebra lo haya solicitado y antes de que se le conceda.">> ./$1.c
+echo "">> ./$1.c
+echo "			// -SEMÁFOROS:">> ./$1.c
+echo "			// 	-Definición: Un Semáforo es una variable entera a la que solamente se accede mediante dos operaciones Atómicas: wait y signal ">> ./$1.c
+echo "			//	-Declaración Global Semáforo: 		sem_t sem">> ./$1.c
+echo "			//	-Inicialización de un Semáforo : 	sem_init (sem_t *sem, int shared, int valor)">> ./$1.c
+echo "			//		-sem_t *sem== Apuntador a una variable de tipo sem_t (hay que utilizar operador &)">> ./$1.c
+echo "			//		-int shared== 0">> ./$1.c
+echo "			//		-int valor== valor inicial">> ./$1.c
+echo "			//	-Destrucción de un Semáforo: 		int sem_destroy(sem_t *sem)">> ./$1.c
+echo "			//	-Operación Atómica wait: 		sem_wait(sem_t *sem)">> ./$1.c
+echo "			//	-Operación Atómica signal: 		sem_post(sem_t *sem)">> ./$1.c
+echo "			//	-Los Semáforos no son parte del estándar Pthread, pero se pueden utilizar de forma conjunta.">> ./$1.c
+echo "			// 	-Operación Atómica: es una operación que garantiza que se ejecutará sin que ningún otro proceso la interrumpa de forma concurrente (Ejemplo: recordar que cuando un proceso 1 varios printf11(), printf12(),... y otro proceso está ejecutando varios printf21(), printf22(),... de forma concurrente, se alternarán los printf's() de ambos procesos por estarse ejecutando de forma concurrente. Pero lo que si sabemos es que un printf() es una operación atómica ya que hasta que no se ejecute el printf() de un proceso, no podrá imprimirse el printf() de otro proceso. ">> ./$1.c
+echo "			// 	-Las operaciones wait y signal deben ser atómicas, por lo que internamente utilizarán inhibidos de Interrupciones (TestAndSet, Swap, etc)">> ./$1.c
+echo "			// 			wait (S){// La librería semaphore.h tiene una implementación de esta función llamada sem_wait(*sem)">> ./$1.c
+echo "			// 				S--">> ./$1.c
+echo "			// 				if(S<0){">> ./$1.c
+echo "			// 					//añadir el proceso a la lista de bloqueados">> ./$1.c
+echo "			// 					block();">> ./$1.c
+echo "			// 				}">> ./$1.c
+echo "			//			}">> ./$1.c
+echo "">> ./$1.c
+echo "			// 			signal(S){// La librería semaphore.h tiene una implementación de esta función llamada sem_post(*sem)">> ./$1.c  
+echo "			// 				S++">> ./$1.c
+echo "			// 				if(S<=0){">> ./$1.c
+echo "			// 					//sacar el proceso P de la lista">> ./$1.c
+echo "			// 					wakeup();">> ./$1.c
+echo "			// 				}">> ./$1.c
+echo "			// 			}">> ./$1.c
+echo "">> ./$1.c
+echo "			// 	-Dos tipos de Semáforos:">> ./$1.c
+echo "			// 		-SEMÁFORO BINARIO (MUTEX = Mutual Exclusion)">> ./$1.c
+echo "			// 			-Sólo puede tomar los valores 0 o 1">> ./$1.c
+echo "			// 			-Permiten resolver el Problema de la Sección crítica">> ./$1.c
+echo "			// 			-Permiten resolver otros Problemas de Sincronización: Ejemplo: garantizar que un proceso se ejecuta antes que otro d">> ./$1.c
+echo "			// 			-INTERBLOQUEOS: dos o más Hebras están esperando indefinidamente por un evento que sólo puede generar uno de las Hebras blóquelas. Ejemplo: 2 Semáforos S1 y S2 inicializados a 1, y 2 Hebras ejecutando H0 y H1-">> ./$1.c
+echo "			// 			-El MUTEX es un mecanismo liviano ideal para Hebras(Procesos Ligeros)">> ./$1.c
+echo "			// 			-Un MUTEX es Semáforo Binario (0 o 1 valores posibles) sin memoria">> ./$1.c
+echo "			// 				-Cerradura cerrada, llave puesta">> ./$1.c
+echo "			// 				-Abro y cierro y me llevo la llave">> ./$1.c
+echo "			// 			-Dos Acciones Atómicas: mutex_lock(m) y mutex_unlock(m)">> ./$1.c
+echo "			// 				mutex_lock(m)">> ./$1.c
+echo "			// 					//Código Sección Critica">> ./$1.c
+echo "			// 				mutex_unlock(m)">> ./$1.c
+echo "			// 				-No se puede hacer un mutex_unlock(m) sin haber hecho previamente un mutex_lock(m). Esto pasa igual que con Tuberías. Si hacemos un close() de una Tubería de la cual no hemos hecho antes un pipe() es un error que es difícil de depurar.">> ./$1.c
+echo "			// 			-MUTEX CON CONDICIÓN:">> ./$1.c
+echo "			// 				-A veces la Hebra que está en la Sección Crítica, no puede continuar, porque no se cumple cierta CONDICIÓN que sólo podría cambiar otra Hebra desde dentro de la Sección Crítica. Para solucionar esto, es preciso:">> ./$1.c						
+echo "			// 					-Liberar temporalmente el MUTEX que protege la Sección Crítica mientras se espera a que la CONDICIÓN se cumpla.">> ./$1.c						
+echo "			// 					-Sin abandonar la Sección Crítica">> ./$1.c
+echo "			// 					-De forma Atómica">> ./$1.c
+echo "			// 				-La implementación de un MUTEX (==SEMÁFORO BINARIO) no se hace utilizando funciones de la Librería semaphore.h, si no que se implementa haciendo uso de funciones de la Librería pthread.h">> ./$1.c
+echo "			// 				-Declaración MUTEX: 			pthread_mutex_t mutex">> ./$1.c
+echo "			// 				-Inicialización de un MUTEX:		int pthread_mutex_init(pthread_mutex_t *mutex, pthread_mutexattr_t *attr)">> ./$1.c
+echo "			// 					-pthread_mutex_t *mutex=Apuntador a una variable de tipo pthread_mutex_t (debemos utilizar &)">> ./$1.c
+echo "			// 					-pthread_mutexattr_t *attr= atributos MUTEX">> ./$1.c
+echo "			// 				-Destrucción de una MUTEX:		int pthread_mutex_destroy(pthread_mutex_t *mutex)">> ./$1.c
+echo "			// 				-Operaciones básicas con MUTEX:-">> ./$1.c
+echo "			// 					-Competir por coger el MUTEX:	int pthread_mutex_lock(pthread_mutex_t *mutex)">> ./$1.c
+echo "			// 					-Devolver el MUTEX:		int pthread_mutex_unlock(pthread_mutex_t *mutex)">> ./$1.c
+echo "">> ./$1.c
+echo "			// 				-Declaración CONDICIÓN MUTEX: 		pthread_cond_t cond_mutex">> ./$1.c
+echo "			// 				-Inicialización CONDICIÓN de un MUTEX:	int pthread_cond_init(pthread_cond_t *cond_mutex, pthread_condattr_t *attr)">> ./$1.c
+echo "			// 					-pthread_cond_t *cond_mutex= apuntador a una variable de tipo condicion_mutex (se debe utilizar operador &)">> ./$1.c
+echo "			// 					-pthread_condattr_t *attr= atributos condición">> ./$1.c
+echo "			// 				-Destrucción de CONDICIÓN de un MUTEX:	int pthread_cond_destroy(pthread_cond_t *cond_mutex)">> ./$1.c
+echo "			// 				-Operaciones básicas con CONDICIONES de MUTEX">> ./$1.c
+echo "			// 					-Operación 1:Sin salir de la Sección Crítica, libera temporalmente el MUTEX que la protege, para esperar a que se cumpla la CONDICIÓN">> ./$1.c
+echo "			// 						int pthread_cond_wait(pthread_cond_t *cond_mutex, pthread_mutex_t *mutex)">> ./$1.c
+echo "			// 					-Operación 2: Señalar un cambio que permita continuar a una las Hebras que espera en la condición">> ./$1.c
+echo "			// 						int pthread_cond_signal(pthread_cond_t *cond_mutex)">> ./$1.c
+echo "			// 					-Operación 3: Señalar un cambio que permita continuar a todos las Hebras que esperan en la CONDICIÓN">> ./$1.c
+echo "			// 						int pthread_cond_broadcast(pthread_cond_t *cond_mutex)">> ./$1.c
+echo "">> ./$1.c
+echo "			// 		-SEMÁFORO CONTADOR">> ./$1.c
+echo "			// 			-Pueden tomar valores dentro de un rango">> ./$1.c
+echo "			// 			-Se pueden utilizar para resolver el Problema de control de acceso a un determinado recurso formado por un número finito de instancias (recursos limitados) Ejemplo: Control de acceso a un Parking en base a plazas disponibles">> ./$1.c
+echo "">> ./$1.c
+echo "			// 			-Los Semáforos Contadores son mecanismos más pesados, más adecuados para Procesos">> ./$1.c
+echo "			// 	-PROBLEMA PRODUCTOR-CONSUMIDOR: Tres semáforos compartidos por las dos Hebras (Hp=HebraProductor y Hc=HebraConsumidor), S1(Semáforo 1: llamado 'sección' inicializado a 1), S2(Semáforo 2: llamado 'full' inicializado a 0) y S3(Semáforo 3: llamado 'empty' inicializado a N">> ./$1.c
 echo "">> ./$1.c
 echo "//---------------------------------" >> ./$1.c
 echo "}// FIN FUNCIÓN MAIN" >> ./$1.c
@@ -398,8 +640,8 @@ echo "">> ./$1.c
 echo "	//IMPLEMENTACION FUNCION 1">> ./$1.c
 echo "	char * nombre_funcion_1(char *cmd){">> ./$1.c
 echo "		// ZONA DE DECLARACION DE VARIABLES LOCALES A LA FUNCIÓN 1">> ./$1.c
-echo "				//int i;">> ./$1.c
-echo "				char *buf;">> ./$1.c
+echo "			//int i;">> ./$1.c
+echo "			char *buf;">> ./$1.c
 echo "		// FIN ZONA DE DECLARACION DE VARIABLES LOCALES A LA FUNCIÓN 1">> ./$1.c
 echo "		//---------------------------------">> ./$1.c
 echo "		// ZONA DE CONTROL ERRORES ARGUMENTOS">> ./$1.c
@@ -410,14 +652,23 @@ echo "		// ZONA DE FUNCIONALIDAD FUNCION">> ./$1.c
 echo "">> ./$1.c
 echo "		// FIN ZONA DE FUNCIONALIDAD FUNCION">> ./$1.c
 echo "">> ./$1.c
+echo "		//IMPORTANTE: 	   C es un Lenguaje que trabaja con apuntadores (bajo nivel). Cuando queremos que una función">> ./$1.c
+echo "		//		   devuelva una variable de tipo apuntador hay dos opciones:">> ./$1.c
+echo "		//		       OPCIÓN 1: Hacer que la función devuelva un char * y usar strdup(3) en el return">> ./$1.c
+echo "		//				 char * funcion(char *Arg1, char *Arg2)">> ./$1.c
+echo "		//				 En está opción será necesario: ">> ./$1.c
+echo "		//					- Devolver mediante el return, una copia de alguna variable Local a la función, mediante el uso de strdup(3), es decir, return strdup(nombre_var_local_funcion_de_tipo_apuntador). Nunca devolver una variable Local.">> ./$1.c
+echo "	">> ./$1.c
+echo "		//		       OPCIÓN 2: void funcion(int *Arg1, int *Arg2). Hacer que la función modifique algunos de sus Argumentos de entrada y sea en ese argumento donde recogemos el resultado de lo que hace la función. Notar que cuando trabajamos con variables de tipo apuntador int, está será la única opción disponible, por no existir ninguna Función de Biblioteca equivalente a strdup(3) para enteros. Por ejemplo, será en Arg1 donde debemos recoger el resultado de los que hace la función.">> ./$1.c
+echo "	">> ./$1.c
 echo "		//IMPORTANTE: 	   No debemos devolver directamente el apuntador *buf, ya que *buf">> ./$1.c
-echo "		// 		   es una variable Local. Haciendo strdup() lo que hacemos es crear una copia">> ./$1.c
+echo "		// 		   es una variable Local, y las variables locales se eliminan al acabar la función.">> ./$1.c
+echo "		// 		   Haciendo strdup() lo que hacemos es crear una copia">> ./$1.c
 echo "		// 		   de lo que hay donde apunta *buf, es decir, se crea una nueva zona de memoria,">> ./$1.c
 echo "		// 		   y devolvemos la copia. Este problema surge porque C puede trabajar a muy bajo">> ./$1.c
 echo "		// 		   nivel y esto es bueno para algunas cosas pero muy peligrosas para otras, este es">> ./$1.c
-echo "		// 		   un claro ejemplo del cuidado que hay que tener. En otros lenguajes de más alto nivel">> ./$1.c
-echo "		// 		   esta copia que aquí hacemos con strdup() se hace de forma interna si necesidad de">> ./$1.c
-echo "		// 		   explicitarlo en el código que redacta el programador.">> ./$1.c
+echo "		// 		   un claro ejemplo del cuidado que hay que tener. En otros lenguajes de más alto nivel, al no utilizar apuntadores, ">> ./$1.c
+echo "		// 		   esta copia no es necesaria hacerla.">> ./$1.c
 echo "		return strdup(buf);">> ./$1.c
 echo "	}">> ./$1.c
 echo "	//FIN IMPLEMENTACION FUNCION 1">> ./$1.c
@@ -445,7 +696,6 @@ echo "			}else if(signal ==SIGUSR2){">> ./$1.c
 echo "">> ./$1.c
 echo "">> ./$1.c
 echo "			}">> ./$1.c
-echo "			return;">> ./$1.c
 echo "		}">> ./$1.c
 echo "	//FIN IMPLEMENTACION FUNCION 3">> ./$1.c
 echo "	//---------------------------------">> ./$1.c
@@ -465,7 +715,6 @@ echo "			}else if(signal ==SIGUSR2){">> ./$1.c
 echo "">> ./$1.c
 echo "">> ./$1.c
 echo "			}">> ./$1.c
-echo "			return;">> ./$1.c
 echo "		}">> ./$1.c
 echo "	//FIN IMPLEMENTACION FUNCION 4">> ./$1.c
 echo "	//---------------------------------">> ./$1.c
@@ -485,9 +734,15 @@ echo "			}else if(signal ==SIGUSR2){">> ./$1.c
 echo "">> ./$1.c
 echo "">> ./$1.c
 echo "			}">> ./$1.c
-echo "			return;">> ./$1.c
 echo "		}">> ./$1.c
 echo "	//FIN IMPLEMENTACION FUNCION 5">> ./$1.c
+echo "	//---------------------------------">> ./$1.c
+echo "	//IMPLEMENTACION FUNCION 6">> ./$1.c
+echo "		//void hebra1(tipo_in1 Arg1_in, tipo_in2 Arg2_in, ..., tipo_inn Argn_in){">> ./$1.c
+echo "">> ./$1.c
+echo "">> ./$1.c
+echo "		//}">> ./$1.c
+echo "	//FIN IMPLEMENTACION FUNCION N">> ./$1.c
 echo "	//---------------------------------">> ./$1.c
 echo "	//IMPLEMENTACION FUNCION N">> ./$1.c
 echo "		//tipo_out nombreFuncionN(tipo_in Arg1_in, Arg2_in,..., Argn_in){">> ./$1.c
@@ -497,5 +752,7 @@ echo "		//}">> ./$1.c
 echo "	//FIN IMPLEMENTACION FUNCION N">> ./$1.c
 echo "">> ./$1.c
 echo "">> ./$1.c
-echo "// FIN IMPLEMENTACIONES FUNCIONES CUYAS CABECERAS ESTAN DEFINIDAS AL PRINCIPIO DE ESTE DOCUMENTO UTILIZADAS DENTRO DE MAIN
-">> ./$1.c
+echo "// FIN IMPLEMENTACIONES FUNCIONES CUYAS CABECERAS ESTAN DEFINIDAS AL PRINCIPIO DE ESTE DOCUMENTO UTILIZADAS DENTRO DE MAIN">> ./$1.c
+open -a TextEdit ./$1.c
+
+exit 0
